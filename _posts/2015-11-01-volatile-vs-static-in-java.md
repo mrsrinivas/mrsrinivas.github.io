@@ -137,4 +137,3 @@ A good rule of thumb: if a variable is **written by one thread and read by other
 - **`static volatile`** = combine them freely. Class-level scope with full visibility guarantee.
 - **`volatile` + `++`** = still a race condition. Use `AtomicInteger` for thread-safe mutation.
 
-The short version from my [Stack Overflow answer](https://stackoverflow.com/a/33413884): `static` variables may be cached per thread. `volatile` forces threads to use the shared copy in main memory only.
