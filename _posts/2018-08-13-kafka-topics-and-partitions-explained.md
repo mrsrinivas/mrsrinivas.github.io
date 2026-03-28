@@ -65,4 +65,4 @@ There's no way to "go back" past what's been retained. Design your retention win
 
 This mental model has served me well across many Kafka deployments. The partition is the fundamental unit of parallelism — everything else (producer routing, consumer scaling, offset tracking) flows from understanding that.
 
-*Originally shared as an [answer on Stack Overflow](https://stackoverflow.com/a/52009243/1592191), expanded here.*
+*Have questions about this? I answered a related question on [Stack Overflow](https://stackoverflow.com/a/52009243/1592191) — feel free to leave a comment there too.*
