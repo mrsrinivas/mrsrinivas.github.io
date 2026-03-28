@@ -1,0 +1,62 @@
+<svg width="700" height="340" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2980b9"/>
+    </marker>
+    <marker id="arr-rev-green" markerWidth="10" markerHeight="7" refX="1" refY="3.5" orient="auto-start-reverse">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60"/>
+    </marker>
+  </defs>
+
+  <rect width="700" height="340" fill="#f8f9fa"/>
+
+  <!-- Main Memory -->
+  <rect x="200" y="20" width="300" height="80" rx="8" fill="#1a6b3a"/>
+  <text x="350" y="46" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#ecf0f1">Main Memory</text>
+  <line x1="210" y1="54" x2="490" y2="54" stroke="#148f54" stroke-width="1"/>
+  <text x="350" y="76" text-anchor="middle" font-family="monospace" font-size="13" fill="#a9dfbf">volatile boolean flag = true</text>
+  <text x="350" y="94" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#76b891">single authoritative source</text>
+
+  <!-- Thread 1 writes directly -->
+  <line x1="280" y1="100" x2="180" y2="165" stroke="#27ae60" stroke-width="2.5" marker-end="url(#arr-green)"/>
+  <text x="160" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#27ae60">write directly</text>
+  <text x="160" y="145" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#27ae60">to main memory</text>
+
+  <!-- Thread 2 reads directly -->
+  <line x1="420" y1="100" x2="520" y2="165" stroke="#2980b9" stroke-width="2.5" marker-end="url(#arr-blue)"/>
+  <text x="540" y="132" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#2980b9">read directly</text>
+  <text x="540" y="145" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#2980b9">from main memory</text>
+
+  <!-- Thread 1 -->
+  <rect x="40" y="165" width="240" height="110" rx="8" fill="#27ae60"/>
+  <text x="160" y="191" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">Thread 1</text>
+  <line x1="50" y1="199" x2="270" y2="199" stroke="#1e8449" stroke-width="1"/>
+  <text x="160" y="222" text-anchor="middle" font-family="monospace" font-size="11" fill="white">flag = true;</text>
+  <text x="160" y="243" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d5f5e3">writes directly to main memory</text>
+  <text x="160" y="261" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d5f5e3">no local cache for volatile</text>
+
+  <!-- No cache symbol on Thread 1 -->
+  <rect x="50" y="270" width="180" height="1" fill="#1e8449"/>
+
+  <!-- Thread 2 -->
+  <rect x="420" y="165" width="240" height="110" rx="8" fill="#2980b9"/>
+  <text x="540" y="191" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="white">Thread 2</text>
+  <line x1="430" y1="199" x2="650" y2="199" stroke="#2471a3" stroke-width="1"/>
+  <text x="540" y="222" text-anchor="middle" font-family="monospace" font-size="11" fill="white">if (flag) { ... }</text>
+  <text x="540" y="243" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d6eaf8">reads directly from main memory</text>
+  <text x="540" y="261" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d6eaf8">always sees latest value</text>
+
+  <!-- Success result -->
+  <rect x="420" y="300" width="240" height="22" rx="6" fill="#d5f5e3" stroke="#27ae60" stroke-width="1.5"/>
+  <text x="540" y="315" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#1e8449">flag = true — condition holds!</text>
+
+  <!-- Success label -->
+  <rect x="588" y="160" width="72" height="24" rx="4" fill="#27ae60"/>
+  <text x="624" y="176" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">VISIBLE</text>
+
+  <!-- Caption -->
+  <text x="350" y="330" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7f8c8d">volatile bypasses all CPU caches — every read goes to main memory, every write is immediately visible</text>
+</svg>
