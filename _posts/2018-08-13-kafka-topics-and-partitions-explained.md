@@ -22,7 +22,7 @@ Partitions are the unit of:
 
 Before routing decisions happen, a producer passes a message through a pipeline of internal components — serializers, partitioner, and a per-partition record accumulator — before batching it to the broker.
 
-![Overview of producer components](/assets/img/posts/kafka-topics-partitions/producer-overview.svg)
+![Overview of producer components](/assets/img/posts/kafka-topics-partitions/producer-overview.svg){: width="760" height="710" }
 
 A producer always targets a **topic**, never a partition directly. But every message lands in exactly one partition. The selection follows a strict priority chain:
 
@@ -30,13 +30,13 @@ A producer always targets a **topic**, never a partition directly. But every mes
 2. **Key-based hashing** — if you provide a message key, Kafka computes `hash(key) % num_partitions`. The same key always routes to the same partition. This gives you **per-key ordering** — useful when all events for a given entity (user, order, device) must be processed in sequence.
 3. **Round-robin (or sticky)** — no partition, no key? Kafka distributes messages evenly across partitions. Modern clients use a *sticky* strategy — batching to one partition until the batch is full, then rotating — to improve throughput without sacrificing fairness.
 
-![Key-based producer routing](/assets/img/posts/kafka-topics-partitions/producer-key-routing.svg)
+![Key-based producer routing](/assets/img/posts/kafka-topics-partitions/producer-key-routing.svg){: width="680" height="300" }
 
 The critical implication: **ordering is only guaranteed within a partition**. If you need strict global ordering across all messages, you're forced to use a single partition — which eliminates parallelism entirely. In practice, most systems choose a meaningful key (customer ID, device ID, entity ID) and accept per-key ordering as sufficient.
 
 **Round-robin** distributes messages evenly with no ordering guarantee — suited to high-throughput pipelines where per-message ordering doesn't matter.
 
-![Round-robin producer routing](/assets/img/posts/kafka-topics-partitions/producer-roundrobin.svg)
+![Round-robin producer routing](/assets/img/posts/kafka-topics-partitions/producer-roundrobin.svg){: width="680" height="300" }
 
 ### Choosing Keys Wisely
 
@@ -64,19 +64,19 @@ Think of partitions as units of work and consumers as workers.
 
 Some consumers handle multiple partitions. Throughput is limited by the slowest consumer. This is a normal operating state — it still works, it just means some consumers carry more load.
 
-![Fewer consumers than partitions](/assets/img/posts/kafka-topics-partitions/fewer-consumers.svg)
+![Fewer consumers than partitions](/assets/img/posts/kafka-topics-partitions/fewer-consumers.svg){: width="620" height="320" }
 
 ### Consumers equal partitions
 
 Clean 1:1 mapping. Each consumer owns exactly one partition. This is the ideal steady state for maximum parallelism with no idle capacity.
 
-![Equal consumers and partitions](/assets/img/posts/kafka-topics-partitions/equal-consumers.svg)
+![Equal consumers and partitions](/assets/img/posts/kafka-topics-partitions/equal-consumers.svg){: width="620" height="340" }
 
 ### More consumers than partitions
 
 The extra consumers sit idle. Kafka cannot split a single partition across multiple consumers within the same group — a partition is always owned by at most one consumer per group.
 
-![More consumers than partitions](/assets/img/posts/kafka-topics-partitions/more-consumers.svg)
+![More consumers than partitions](/assets/img/posts/kafka-topics-partitions/more-consumers.svg){: width="620" height="390" }
 
 If you have 5 consumers and 4 partitions, the 5th consumer does nothing. Adding more consumers beyond partition count gives zero throughput benefit.
 
