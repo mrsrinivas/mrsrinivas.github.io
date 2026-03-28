@@ -1,0 +1,72 @@
+<svg width="700" height="360" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d"/>
+    </marker>
+    <marker id="arr-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#c0392b"/>
+    </marker>
+  </defs>
+
+  <rect width="700" height="360" fill="#f8f9fa"/>
+
+  <!-- Title -->
+  <text x="350" y="22" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="bold" fill="#2c3e50">counter++ is NOT atomic — it is 3 separate operations</text>
+
+  <!-- Step boxes background -->
+  <rect x="30" y="35" width="300" height="30" rx="4" fill="#2980b9"/>
+  <text x="180" y="55" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">Thread 1</text>
+
+  <rect x="370" y="35" width="300" height="30" rx="4" fill="#c0392b"/>
+  <text x="520" y="55" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">Thread 2</text>
+
+  <!-- Main memory bar -->
+  <rect x="270" y="35" width="160" height="30" rx="4" fill="#2c3e50"/>
+  <text x="350" y="55" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#ecf0f1">Main Memory</text>
+
+  <!-- Timeline rows -->
+  <!-- Row 1 -->
+  <rect x="30" y="80" width="300" height="44" rx="4" fill="#d6eaf8" stroke="#2980b9" stroke-width="1"/>
+  <text x="180" y="99" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#1a5276">Step 1: READ</text>
+  <text x="180" y="116" text-anchor="middle" font-family="monospace" font-size="11" fill="#1a5276">reads counter = 0</text>
+
+  <rect x="270" y="80" width="160" height="44" rx="4" fill="#eaecee" stroke="#7f8c8d" stroke-width="1"/>
+  <text x="350" y="107" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c3e50">counter = 0</text>
+
+  <rect x="370" y="80" width="300" height="44" rx="4" fill="#fadbd8" stroke="#c0392b" stroke-width="1"/>
+  <text x="520" y="99" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#78281f">Step 1: READ</text>
+  <text x="520" y="116" text-anchor="middle" font-family="monospace" font-size="11" fill="#78281f">reads counter = 0</text>
+
+  <!-- Row 2 -->
+  <rect x="30" y="138" width="300" height="44" rx="4" fill="#d6eaf8" stroke="#2980b9" stroke-width="1"/>
+  <text x="180" y="157" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#1a5276">Step 2: INCREMENT</text>
+  <text x="180" y="174" text-anchor="middle" font-family="monospace" font-size="11" fill="#1a5276">local: 0 + 1 = 1</text>
+
+  <rect x="270" y="138" width="160" height="44" rx="4" fill="#eaecee" stroke="#7f8c8d" stroke-width="1"/>
+  <text x="350" y="165" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c3e50">counter = 0</text>
+
+  <rect x="370" y="138" width="300" height="44" rx="4" fill="#fadbd8" stroke="#c0392b" stroke-width="1"/>
+  <text x="520" y="157" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#78281f">Step 2: INCREMENT</text>
+  <text x="520" y="174" text-anchor="middle" font-family="monospace" font-size="11" fill="#78281f">local: 0 + 1 = 1</text>
+
+  <!-- Row 3 -->
+  <rect x="30" y="196" width="300" height="44" rx="4" fill="#d6eaf8" stroke="#2980b9" stroke-width="1"/>
+  <text x="180" y="215" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#1a5276">Step 3: WRITE</text>
+  <text x="180" y="232" text-anchor="middle" font-family="monospace" font-size="11" fill="#1a5276">writes counter = 1</text>
+
+  <rect x="270" y="196" width="160" height="44" rx="4" fill="#eaecee" stroke="#7f8c8d" stroke-width="1"/>
+  <text x="350" y="223" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="#2c3e50">counter = 1</text>
+
+  <rect x="370" y="196" width="300" height="44" rx="4" fill="#fadbd8" stroke="#c0392b" stroke-width="1"/>
+  <text x="520" y="215" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="#78281f">Step 3: WRITE</text>
+  <text x="520" y="232" text-anchor="middle" font-family="monospace" font-size="11" fill="#78281f">writes counter = 1 (overwrites!)</text>
+
+  <!-- Final result in main memory -->
+  <rect x="270" y="254" width="160" height="44" rx="4" fill="#c0392b"/>
+  <text x="350" y="275" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">RESULT</text>
+  <text x="350" y="292" text-anchor="middle" font-family="monospace" font-size="13" font-weight="bold" fill="white">counter = 1</text>
+
+  <!-- Expected vs actual -->
+  <text x="350" y="325" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#c0392b" font-weight="bold">Expected 2, got 1 — both threads incremented from 0</text>
+  <text x="350" y="348" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7f8c8d">Use AtomicInteger.incrementAndGet() or synchronized for atomic operations</text>
+</svg>
