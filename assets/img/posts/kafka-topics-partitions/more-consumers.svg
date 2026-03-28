@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 390" font-family="sans-serif">
+  <rect width="620" height="390" fill="#f8f9fa" rx="8"/>
+  <text x="310" y="26" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a1a2e">More Consumers than Partitions — Consumer 5 is Idle</text>
+
+  <!-- Topic T1 panel -->
+  <rect x="20" y="44" width="240" height="278" rx="8" fill="#d4e9f7" stroke="#7fb3d3" stroke-width="1.5"/>
+  <text x="140" y="66" text-anchor="middle" font-size="13" font-style="italic" font-weight="bold" fill="#1a5276">Topic T1</text>
+
+  <!-- Partition boxes -->
+  <rect x="38" y="76"  width="196" height="40" rx="5" fill="#3498db" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="136" y="101" text-anchor="middle" font-size="13" fill="white">Partition 0</text>
+
+  <rect x="38" y="130" width="196" height="40" rx="5" fill="#3498db" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="136" y="155" text-anchor="middle" font-size="13" fill="white">Partition 1</text>
+
+  <rect x="38" y="184" width="196" height="40" rx="5" fill="#3498db" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="136" y="209" text-anchor="middle" font-size="13" fill="white">Partition 2</text>
+
+  <rect x="38" y="238" width="196" height="40" rx="5" fill="#3498db" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="136" y="263" text-anchor="middle" font-size="13" fill="white">Partition 3</text>
+
+  <!-- Consumer Group 1 panel -->
+  <rect x="360" y="44" width="240" height="330" rx="8" fill="#d5ecd8" stroke="#7dba87" stroke-width="1.5"/>
+  <text x="480" y="66" text-anchor="middle" font-size="13" font-style="italic" font-weight="bold" fill="#1d6a2e">Consumer Group 1</text>
+
+  <!-- Consumer boxes C1–C4 active -->
+  <rect x="378" y="76"  width="204" height="40" rx="5" fill="#e8a87c" stroke="#c0795a" stroke-width="1.5"/>
+  <text x="480" y="101" text-anchor="middle" font-size="13" fill="#3d1c02">Consumer 1</text>
+
+  <rect x="378" y="130" width="204" height="40" rx="5" fill="#e8a87c" stroke="#c0795a" stroke-width="1.5"/>
+  <text x="480" y="155" text-anchor="middle" font-size="13" fill="#3d1c02">Consumer 2</text>
+
+  <rect x="378" y="184" width="204" height="40" rx="5" fill="#e8a87c" stroke="#c0795a" stroke-width="1.5"/>
+  <text x="480" y="209" text-anchor="middle" font-size="13" fill="#3d1c02">Consumer 3</text>
+
+  <rect x="378" y="238" width="204" height="40" rx="5" fill="#e8a87c" stroke="#c0795a" stroke-width="1.5"/>
+  <text x="480" y="263" text-anchor="middle" font-size="13" fill="#3d1c02">Consumer 4</text>
+
+  <!-- C5 idle — greyed out -->
+  <rect x="378" y="300" width="204" height="40" rx="5" fill="#d5d8dc" stroke="#aab7b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="480" y="321" text-anchor="middle" font-size="13" fill="#7f8c8d">Consumer 5</text>
+  <text x="480" y="337" text-anchor="middle" font-size="10" fill="#95a5a6">(idle — no partition assigned)</text>
+
+  <!-- Arrows: P0→C1, P1→C2, P2→C3, P3→C4 -->
+  <line x1="234" y1="96"  x2="378" y2="96"  stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr3)"/>
+  <line x1="234" y1="150" x2="378" y2="150" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr3)"/>
+  <line x1="234" y1="204" x2="378" y2="204" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr3)"/>
+  <line x1="234" y1="258" x2="378" y2="258" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#arr3)"/>
+
+  <defs>
+    <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2c3e50"/>
+    </marker>
+  </defs>
+</svg>

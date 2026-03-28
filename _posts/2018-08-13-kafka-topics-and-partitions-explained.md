@@ -1,68 +1,155 @@
 ---
-title: "Kafka Topics and Partitions — How I Think About Them"
+title: "Kafka Topics and Partitions — A Complete Guide"
 date: 2018-08-13 19:16:00 +0800
 categories: [Data Engineering, Messaging]
 tags: [kafka, distributed-systems, streaming, consumer-groups]
 ---
 
-When I first started working with Kafka, the producer/consumer mental model felt intuitive until partitions entered the picture. Questions like *"who decides which partition a message lands in?"* or *"how does a consumer group actually divide work?"* were things I had to think through carefully. This post is how I now explain it to myself — and to teammates.
+Apache Kafka's power comes from a deceptively simple model: producers write messages to topics, consumers read from them. But the real machinery — ordering guarantees, parallel consumption, fault tolerance — all lives inside the partition. This post walks through the full picture, from producer routing decisions to offset management and rebalancing.
+
+## Topics and Partitions
+
+A **topic** is a named stream of records. It's the logical unit you interact with as a developer. Internally, a topic is divided into one or more **partitions** — ordered, append-only logs stored on disk.
+
+Each partition is an independent sequence. Messages within a partition have a guaranteed order. Messages across partitions have none.
+
+Partitions are the unit of:
+- **Parallelism** — producers can write to different partitions simultaneously; consumers can read in parallel
+- **Replication** — each partition has one leader and zero or more followers; Kafka ensures durability by replicating across brokers
+- **Scalability** — adding partitions lets you scale throughput horizontally
 
 ## The Producer Side: Who Picks the Partition?
 
-A producer always targets a **topic**, not a partition directly. But under the hood, every message ends up in exactly one partition. The decision follows a simple priority chain:
+Before routing decisions happen, a producer passes a message through a pipeline of internal components — serializers, partitioner, and a per-partition record accumulator — before batching it to the broker.
 
-1. **Explicit partition id** — if you set it in the message, it goes there, full stop.
-2. **Key-based hashing** — if you supply a message key, Kafka computes `key % num_partitions` and routes consistently. Same key always hits the same partition. This is what gives you ordering guarantees per entity (e.g. all events for `user_id=42` land in the same partition, in order).
-3. **Round-robin** — no partition, no key? Messages are distributed evenly across partitions. Good for throughput, no ordering guarantees.
+![Overview of producer components](/assets/img/posts/kafka-topics-partitions/producer-overview.svg)
 
-The key insight: **ordering is only guaranteed within a partition**. If you need global ordering, you're stuck with one partition — which kills parallelism. Most real systems trade ordering scope for throughput by choosing keys carefully.
+A producer always targets a **topic**, never a partition directly. But every message lands in exactly one partition. The selection follows a strict priority chain:
+
+1. **Explicit partition id** — if you set `partition` in the `ProducerRecord`, Kafka uses it unconditionally.
+2. **Key-based hashing** — if you provide a message key, Kafka computes `hash(key) % num_partitions`. The same key always routes to the same partition. This gives you **per-key ordering** — useful when all events for a given entity (user, order, device) must be processed in sequence.
+3. **Round-robin (or sticky)** — no partition, no key? Kafka distributes messages evenly across partitions. Modern clients use a *sticky* strategy — batching to one partition until the batch is full, then rotating — to improve throughput without sacrificing fairness.
+
+![Key-based producer routing](/assets/img/posts/kafka-topics-partitions/producer-key-routing.svg)
+
+The critical implication: **ordering is only guaranteed within a partition**. If you need strict global ordering across all messages, you're forced to use a single partition — which eliminates parallelism entirely. In practice, most systems choose a meaningful key (customer ID, device ID, entity ID) and accept per-key ordering as sufficient.
+
+**Round-robin** distributes messages evenly with no ordering guarantee — suited to high-throughput pipelines where per-message ordering doesn't matter.
+
+![Round-robin producer routing](/assets/img/posts/kafka-topics-partitions/producer-roundrobin.svg)
+
+### Choosing Keys Wisely
+
+A good partition key distributes load evenly across partitions. A bad key causes **partition skew** — one partition receives far more messages than others, creating a bottleneck.
+
+Avoid keys that have low cardinality or that cluster heavily (e.g. using a boolean field, or a status code with 90% of messages sharing one value). Prefer high-cardinality, evenly distributed identifiers.
 
 ## The Consumer Side: Group ID Matters More Than You Think
 
-Every consumer should set a `group.id`. Without it, you're using the simple assignment API — you handle partition assignment yourself and Kafka won't track your offsets.
+Every consumer should set a `group.id`. Without it, you're using the simple (assign) API — you manage partition assignment yourself and Kafka does not track your offsets.
 
-With a group ID, Kafka treats all consumers sharing that ID as a **single logical subscriber**. The group collectively consumes the topic, with each partition assigned to exactly one consumer in the group at a time.
+With a group ID, Kafka treats all consumers sharing that ID as a **single logical subscriber**. The group collectively consumes the topic: each partition is assigned to exactly one consumer in the group at any point in time.
+
+This means:
+- **Within a group**, no two consumers ever read the same partition simultaneously — no duplicate processing
+- **Across groups**, each group gets its own independent read cursor — two groups on the same topic each receive every message
+
+A common pattern is to have one consumer group per downstream system or application. Your analytics pipeline and your alerting system can both consume the same topic independently.
 
 ## Partition-to-Consumer Mapping: Three Scenarios
 
-This is where it clicked for me. Think of partitions as units of work and consumers as workers.
+Think of partitions as units of work and consumers as workers.
 
-**Fewer consumers than partitions** — some consumers handle multiple partitions. Still works, just means some workers are busier.
+### Fewer consumers than partitions
 
-![Fewer consumers than partitions](https://i.sstatic.net/zq0Mz.png)
+Some consumers handle multiple partitions. Throughput is limited by the slowest consumer. This is a normal operating state — it still works, it just means some consumers carry more load.
 
-**Consumers equal partitions** — clean 1:1 mapping. Each consumer owns exactly one partition. This is the ideal steady state.
+![Fewer consumers than partitions](/assets/img/posts/kafka-topics-partitions/fewer-consumers.svg)
 
-![Equal consumers and partitions](https://i.sstatic.net/qw3MC.png)
+### Consumers equal partitions
 
-**More consumers than partitions** — the extra consumers sit idle. Kafka can't split a partition across consumers within a group. So if you have 5 consumers and 4 partitions, Consumer 5 does nothing. Scaling beyond partition count gives you zero benefit.
+Clean 1:1 mapping. Each consumer owns exactly one partition. This is the ideal steady state for maximum parallelism with no idle capacity.
 
-![More consumers than partitions](https://i.sstatic.net/jXcjI.png)
+![Equal consumers and partitions](/assets/img/posts/kafka-topics-partitions/equal-consumers.svg)
 
-This last scenario is a common mistake when teams try to "scale out" consumers without increasing partition count first. **Add partitions before adding consumers.**
+### More consumers than partitions
 
-## Who Manages Offsets?
+The extra consumers sit idle. Kafka cannot split a single partition across multiple consumers within the same group — a partition is always owned by at most one consumer per group.
 
-Kafka tracks where each consumer group is up to via the internal `__consumer_offsets` topic. By default `enable.auto.commit=true` and Kafka handles this for you.
+![More consumers than partitions](/assets/img/posts/kafka-topics-partitions/more-consumers.svg)
 
-When you need more control — say, you only want to commit after successfully writing to a downstream system — set `enable.auto.commit=false` and call `consumer.commitSync()` or `consumer.commitAsync()` yourself.
+If you have 5 consumers and 4 partitions, the 5th consumer does nothing. Adding more consumers beyond partition count gives zero throughput benefit.
 
-The entity coordinating all of this is the **Group Coordinator**, an elected broker in the cluster that:
-- Receives periodic heartbeats from consumers
-- Handles offset commits and fetch requests
-- Triggers rebalances when consumers join or leave the group
+**The rule:** increase partition count before increasing consumer count. You can always add consumers up to the partition count; beyond that, scale the partitions first.
 
-## What Happens When Messages Expire?
+## The Group Coordinator and Rebalancing
 
-Retention is a topic-level setting (default 7 days). When messages age out, the offsets that pointed to them become meaningless. If a consumer starts fresh after all messages have expired, the `auto.offset.reset` config decides what to do:
+Every consumer group has a **Group Coordinator** — an elected broker responsible for:
 
-- `latest` — start from new messages arriving now (default behaviour, sensible for most cases)
-- `earliest` — start from the oldest available message
+- Receiving periodic heartbeats from consumers (detecting failures)
+- Handling offset commits
+- Triggering and coordinating **rebalances**
 
-There's no way to "go back" past what's been retained. Design your retention window around your slowest possible consumer, not your average one.
+A rebalance happens when the group membership changes: a consumer joins, crashes, or is removed. During a rebalance, partition assignments are redistributed across the current live consumers. While a rebalance is in progress, consumption pauses — this is a known latency source in high-throughput systems.
+
+To minimise rebalance frequency:
+- Set `session.timeout.ms` and `heartbeat.interval.ms` appropriately (heartbeat should be roughly ⅓ of session timeout)
+- Use `max.poll.interval.ms` to bound how long processing a single batch can take before Kafka considers the consumer dead
+- Consider static membership (`group.instance.id`) for consumers that restart frequently — it allows a consumer to rejoin without triggering a full rebalance
+
+## Offset Management
+
+Kafka tracks where each consumer group is up to via an internal topic: `__consumer_offsets`. Each (group, topic, partition) triple has an associated committed offset — the position of the last successfully processed message.
+
+**Auto-commit** (`enable.auto.commit=true`, the default) commits offsets on a schedule (`auto.commit.interval.ms`, default 5 seconds). This is convenient but means you can re-process messages after a crash if processing happens between commits.
+
+**Manual commit** (`enable.auto.commit=false`) gives you control. Commit only after your downstream write succeeds:
+
+```java
+while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+    process(records);                     // write to database, call API, etc.
+    consumer.commitSync();                // only commit after successful processing
+}
+```
+
+Use `commitAsync()` for throughput-sensitive paths where you can tolerate occasional reprocessing. Use `commitSync()` when correctness matters more than latency.
+
+### Offset Reset Behaviour
+
+When a consumer group starts fresh — or its committed offset is gone because the partition was compacted or the group is new — `auto.offset.reset` determines where to begin:
+
+- `latest` (default) — start from messages arriving after the consumer starts. Historical messages are skipped.
+- `earliest` — start from the oldest retained message in the partition.
+- `none` — throw an exception if no committed offset exists (useful to catch misconfiguration early).
+
+There is no way to go back past what Kafka has retained. Design your **retention window** (`retention.ms`, default 7 days) around your slowest realistic consumer, not your average one.
+
+## Replication and Durability
+
+Each partition has one **leader** and zero or more **followers** (replicas). All reads and writes go through the leader. Followers replicate asynchronously.
+
+The **In-Sync Replica (ISR)** set contains replicas that are caught up with the leader within a configurable lag threshold. A message is considered committed when it has been written to all ISRs.
+
+`acks` on the producer controls the durability guarantee:
+- `acks=0` — fire and forget; no guarantee
+- `acks=1` — leader acknowledged; followers may not have it yet
+- `acks=all` (or `-1`) — all ISRs acknowledged; strongest durability guarantee
+
+For production systems handling important data, use `acks=all` together with `min.insync.replicas=2` (or higher) to ensure at least two brokers have the message before the producer considers it sent.
+
+## Compaction vs. Retention
+
+Kafka supports two log cleanup strategies per topic:
+
+**Delete** (default) — messages are removed after `retention.ms` or when the log exceeds `retention.bytes`. Suitable for event streams where you care about recency.
+
+**Compact** — Kafka retains only the latest message per key, indefinitely. Older messages with the same key are garbage collected. Suitable for changelog or state-snapshot topics — the topic acts like a key-value store that consumers can replay to reconstruct state.
+
+A topic can use `cleanup.policy=compact,delete` to combine both: compacted within the retention window, deleted after.
 
 ---
 
-This mental model has served me well across many Kafka deployments. The partition is the fundamental unit of parallelism — everything else (producer routing, consumer scaling, offset tracking) flows from understanding that.
+Understanding partitions as the fundamental unit of parallelism makes every other Kafka decision clearer. Producer key selection, consumer group sizing, rebalance tuning, offset strategy — all of it flows from how partitions work and how they are assigned.
 
-*Have questions about this? I answered a related question on [Stack Overflow](https://stackoverflow.com/a/52009243/1592191) — feel free to leave a comment there too.*
+The partition count you set at topic creation is hard to change later (increasing is possible but requires care; decreasing is not supported without recreation). Think through your throughput requirements, consumer parallelism needs, and key distribution before you create a topic in production.

@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 710" font-family="sans-serif">
+  <defs>
+    <marker id="ap" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#2c3e50"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="710" fill="#f8f9fa" rx="8"/>
+
+  <!-- ═══ LEFT FEEDBACK LINES ═══ -->
+  <!-- "When successful, return Metadata": from Kafka Broker left → far left → up → ProducerRecord -->
+  <polyline points="378,607 28,607 28,90 350,90" fill="none" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <!-- "If can't retry, throw exception": from Retry? left → second left line → up → ProducerRecord -->
+  <polyline points="85,375 52,375 52,118 350,118" fill="none" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+
+  <!-- Left line labels (rotated along the vertical segments) -->
+  <text transform="rotate(-90,15,350)" x="15" y="350" text-anchor="middle" font-size="10" fill="#27ae60">When successful, return Metadata</text>
+  <text transform="rotate(-90,40,248)" x="40" y="248" text-anchor="middle" font-size="10" fill="#c0392b">If can't retry, throw exception</text>
+
+  <!-- ═══ ProducerRecord box — centered at x=470 ═══ -->
+  <rect x="350" y="20" width="240" height="155" rx="4" fill="white" stroke="#2471a3" stroke-width="2"/>
+  <rect x="350" y="20" width="240" height="32" rx="4" fill="#2c3e50"/>
+  <rect x="350" y="40"  width="240" height="12"  fill="#2c3e50"/>
+  <text x="470" y="42" text-anchor="middle" font-size="14" font-weight="bold" fill="white">ProducerRecord</text>
+  <rect x="350" y="52"  width="240" height="28" fill="#27ae60"/>
+  <text x="470" y="71" text-anchor="middle" font-size="13" fill="white">Topic</text>
+  <rect x="350" y="80"  width="240" height="28" fill="white" stroke="#d5d8dc" stroke-width="0.5"/>
+  <text x="470" y="99" text-anchor="middle" font-size="13" fill="#555">[Partition]</text>
+  <rect x="350" y="108" width="240" height="28" fill="#ecf0f1" stroke="#d5d8dc" stroke-width="0.5"/>
+  <text x="470" y="127" text-anchor="middle" font-size="13" fill="#555">[Key]</text>
+  <rect x="350" y="136" width="240" height="39" fill="#27ae60"/>
+  <text x="470" y="161" text-anchor="middle" font-size="13" fill="white">Value</text>
+
+  <!-- Send() arrow — centered at x=470 -->
+  <line x1="470" y1="175" x2="470" y2="200" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <text x="484" y="192" font-size="12" fill="#333">Send ()</text>
+
+  <!-- ═══ Dashed border (producer internals only) ═══ -->
+  <rect x="75" y="205" width="645" height="295" rx="6" fill="none" stroke="#888" stroke-width="1.5" stroke-dasharray="8,4"/>
+
+  <!-- Serializer — centered at x=470 -->
+  <rect x="370" y="215" width="200" height="36" rx="4" fill="#5dade2" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="470" y="238" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Serializer</text>
+
+  <!-- Serializer → Partitioner -->
+  <line x1="470" y1="251" x2="470" y2="273" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+
+  <!-- Partitioner — centered at x=470 -->
+  <rect x="370" y="276" width="200" height="36" rx="4" fill="#5dade2" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="470" y="299" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Partitioner</text>
+
+  <!-- Partitioner split arrows to batch groups -->
+  <path d="M 430 312 Q 395 325 360 335" fill="none" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <path d="M 510 312 Q 545 325 580 335" fill="none" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+
+  <!-- ═══ Topic A / Partition 0 batch group ═══ -->
+  <rect x="260" y="335" width="200" height="155" rx="4" fill="#d4e9f7" stroke="#2471a3" stroke-width="1.5"/>
+  <rect x="260" y="335" width="200" height="42"  rx="4" fill="#3498db" stroke="#2471a3" stroke-width="1"/>
+  <rect x="260" y="355" width="200" height="22"  fill="#3498db"/>
+  <text x="360" y="352" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Topic A</text>
+  <text x="360" y="370" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Partition 0</text>
+  <rect x="274" y="382" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="360" y="400" text-anchor="middle" font-size="12" fill="white">Batch 0</text>
+  <rect x="274" y="413" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="360" y="431" text-anchor="middle" font-size="12" fill="white">Batch 1</text>
+  <rect x="274" y="444" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="360" y="462" text-anchor="middle" font-size="12" fill="white">Batch 2</text>
+
+  <!-- ═══ Topic B / Partition 1 batch group ═══ -->
+  <rect x="480" y="335" width="200" height="155" rx="4" fill="#d4e9f7" stroke="#2471a3" stroke-width="1.5"/>
+  <rect x="480" y="335" width="200" height="42"  rx="4" fill="#3498db" stroke="#2471a3" stroke-width="1"/>
+  <rect x="480" y="355" width="200" height="22"  fill="#3498db"/>
+  <text x="580" y="352" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Topic B</text>
+  <text x="580" y="370" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Partition 1</text>
+  <rect x="494" y="382" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="580" y="400" text-anchor="middle" font-size="12" fill="white">Batch 0</text>
+  <rect x="494" y="413" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="580" y="431" text-anchor="middle" font-size="12" fill="white">Batch 1</text>
+  <rect x="494" y="444" width="172" height="28" rx="3" fill="#3498db" stroke="#1a6fa3" stroke-width="1"/>
+  <text x="580" y="462" text-anchor="middle" font-size="12" fill="white">Batch 2</text>
+
+  <!-- ═══ Retry? diamond ═══ -->
+  <polygon points="135,345 188,375 135,405 82,375" fill="#f9e4b7" stroke="#c0795a" stroke-width="1.8"/>
+  <text x="135" y="379" text-anchor="middle" font-size="12" fill="#5d3a1a" font-weight="bold">Retry?</text>
+
+  <!-- Retry? Yes → right → into batch queue -->
+  <line x1="188" y1="375" x2="260" y2="375" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <text x="224" y="368" text-anchor="middle" font-size="11" fill="#333">Yes</text>
+
+  <!-- ═══ Fail? diamond ═══ -->
+  <polygon points="135,430 188,460 135,490 82,460" fill="#f9e4b7" stroke="#c0795a" stroke-width="1.8"/>
+  <text x="135" y="464" text-anchor="middle" font-size="12" fill="#5d3a1a" font-weight="bold">Fail?</text>
+
+  <!-- Fail? Yes → up → Retry? -->
+  <line x1="135" y1="430" x2="135" y2="406" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <text x="148" y="421" font-size="11" fill="#333">Yes</text>
+
+  <!-- ═══ Arrows from batch groups down to Kafka Broker ═══ -->
+  <line x1="360" y1="490" x2="415" y2="572" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+  <line x1="580" y1="490" x2="525" y2="572" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+
+  <!-- ═══ Kafka Broker cylinder — outside dashed box, centered at x=470 ═══ -->
+  <ellipse cx="470" cy="630" rx="92" ry="20" fill="#1a6fa3"/>
+  <rect x="378" y="577" width="184" height="53" fill="#3498db"/>
+  <ellipse cx="470" cy="577" rx="92" ry="20" fill="#5dade2" stroke="#2471a3" stroke-width="1.5"/>
+  <ellipse cx="470" cy="630" rx="92" ry="20" fill="#2980b9" stroke="#2471a3" stroke-width="1.5"/>
+  <line x1="378" y1="577" x2="378" y2="630" stroke="#2471a3" stroke-width="1.5"/>
+  <line x1="562" y1="577" x2="562" y2="630" stroke="#2471a3" stroke-width="1.5"/>
+  <text x="470" y="609" text-anchor="middle" font-size="13" fill="white" font-weight="bold">Kafka Broker</text>
+
+  <!-- Kafka Broker → Fail? (left then up into dashed box) -->
+  <polyline points="378,603 135,603 135,491" fill="none" stroke="#2c3e50" stroke-width="1.8" marker-end="url(#ap)"/>
+</svg>
