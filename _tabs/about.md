@@ -3,14 +3,14 @@ icon: fas fa-info-circle
 order: 5
 ---
 
-I'm **Srinivas Reddy**, a Cloud Data/ML Engineering Lead with 12+ years of experience building large-scale data platforms, real-time streaming systems, and ML infrastructure.
+I'm **Srinivas Reddy**, a Cloud Data/AI Engineering Lead with 12+ years of experience building large-scale data platforms, real-time streaming systems, and AI infrastructure.
 
-Currently **Staff Software Engineer at Constantinople**, previously **Engineering Lead at Grab** (Southeast Asia's leading superapp) where I owned petabyte-scale data processing, real-time streaming with Kafka + Spark/Flink, ML feature stores, and self-serve tooling used by hundreds of data scientists across ride-hailing, food, and fintech.
+Currently **Staff Software Engineer at Constantinople**, previously **Engineering Lead at Grab** (Southeast Asia's leading superapp) where I owned petabyte-scale data processing, real-time streaming with Kafka + Spark/Flink, AI feature stores, and self-serve tooling used by hundreds of data scientists across ride-hailing, food, and fintech.
 
 ## What I work on
 
 - **Real-time pipelines** — Kafka, Spark Structured Streaming, Flink
-- **ML infrastructure** — Feature stores, model serving, experiment tracking, MLflow
+- **AI infrastructure** — Feature stores, model serving, experiment tracking, MLflow
 - **Cloud** — AWS (EMR, Glue, Redshift, Kinesis), GCP (BigQuery, Dataflow), Azure (ADF, Synapse)
 - **Data platforms** — Delta Lake, Apache Iceberg, dbt, Airflow
 - **Languages** — Python, Scala, SQL, Java
