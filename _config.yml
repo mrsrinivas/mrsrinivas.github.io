@@ -58,6 +58,12 @@ defaults:
     values:
       layout: post
       comments: false
+  - scope:
+      path: ""
+      type: tabs
+    values:
+      layout: page
+      permalink: /:title/
       toc: true
 
 sass:
