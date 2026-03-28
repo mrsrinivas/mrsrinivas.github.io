@@ -58,6 +58,7 @@ defaults:
     values:
       layout: post
       comments: false
+      toc: true
   - scope:
       path: ""
       type: tabs
