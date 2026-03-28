@@ -1,10 +1,8 @@
 ---
-layout: post
 title: "Building Real-Time Data Pipelines with Kafka and Spark Structured Streaming"
-date: 2026-03-28
-categories: [data-engineering, streaming]
-tags: [kafka, spark, pyspark, structured-streaming, real-time]
-excerpt: "Structured Streaming turns Spark into a first-class stream processor. Here's how to wire it to Kafka correctly — covering offset management, watermarking, stateful aggregations, and the production pitfalls that bite teams at scale."
+date: 2026-03-28 09:00:00 +0800
+categories: [Data Engineering, Streaming]
+tags: [kafka, spark, pyspark, python, distributed-systems]
 ---
 
 Real-time data pipelines fail in predictable ways. The message bus fills up, a consumer falls behind, stateful joins balloon in memory, and suddenly your "low-latency" pipeline is hours behind. After running Kafka + Spark Structured Streaming in production at scale, here are the patterns that actually hold up.

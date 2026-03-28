@@ -1,35 +1,78 @@
+theme: jekyll-theme-chirpy
+
+lang: en
+timezone: Asia/Singapore
+
 title: Srinivas Reddy
-description: Cloud Data/ML Engineering Lead — writing about data engineering, distributed systems, and machine learning.
+tagline: Cloud Data/ML Engineering Lead
+description: Writing about data engineering, distributed systems, streaming pipelines, and machine learning at scale.
+
 url: "https://mrsrinivas.github.io"
 baseurl: ""
-author:
-  name: Srinivas Reddy
-  email: ""
-  github: mrsrinivas
-  linkedin: mrsrinivas
-  twitter: mrsrinivas
 
-# Build settings
+github:
+  username: mrsrinivas
+
+twitter:
+  username: mrsrinivas
+
+social:
+  name: Srinivas Reddy
+  email: heysrini@outlook.com
+  links:
+    - https://github.com/mrsrinivas
+    - https://www.linkedin.com/in/mrsrinivas
+
+avatar: /assets/img/avatar.jpg
+
+theme_mode: # leave blank for auto (light/dark follows OS)
+
+toc: true
+
+paginate: 10
+
 markdown: kramdown
 highlighter: rouge
-permalink: /:year/:month/:day/:title/
-
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+  syntax_highlighter_opts:
+    css_class: highlight
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+
+permalink: /posts/:title/
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      comments: false
+      toc: true
+
+sass:
+  style: compressed
+
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  profile: false
+  blanklines: false
+  ignore:
+    envs: [development]
 
 exclude:
-  - Gemfile
-  - Gemfile.lock
-  - node_modules
-  - vendor
-  - .sass-cache
+  - "*.gem"
+  - "*.gemspec"
   - Gruntfile.js
-  - package.json
   - less/
-  - dist/
   - mail/
+  - dist/
+  - src-index.html
+  - vendor
+  - .bundle
