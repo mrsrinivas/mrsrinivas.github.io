@@ -17,6 +17,15 @@
   <!-- .profile-wrapper -->
 
   <nav class="flex-column flex-grow-1 w-100 ps-0">
+    <!-- Dark/light mode toggle at top of nav -->
+    {% unless site.theme_mode %}
+      <div class="d-flex align-items-center ps-2 pt-1 pb-1">
+        <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle">
+          <i class="fas fa-adjust"></i>
+        </button>
+      </div>
+    {% endunless %}
+
     <ul class="nav">
       <!-- home -->
       <li class="nav-item{% if page.layout == 'home' %}{{ " active" }}{% endif %}">
@@ -41,16 +50,7 @@
   </nav>
 
   <div class="sidebar-bottom d-flex flex-column w-100">
-    <!-- Dark mode toggle — its own row -->
-    {% unless site.theme_mode %}
-      <div class="d-flex align-items-center pb-1">
-        <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle">
-          <i class="fas fa-adjust"></i>
-        </button>
-      </div>
-    {% endunless %}
-
-    <!-- Social icons — separate row -->
+    <!-- Social icons -->
     <div class="d-flex flex-wrap align-items-center">
       {% for entry in site.data.contact %}
         {%- assign url = null -%}
