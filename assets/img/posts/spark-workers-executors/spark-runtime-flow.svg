@@ -1,0 +1,114 @@
+<svg width="760" height="510" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7f8c8d"/>
+    </marker>
+    <marker id="arr-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#8e44ad"/>
+    </marker>
+  </defs>
+
+  <rect width="760" height="510" fill="#f8f9fa"/>
+
+  <!-- User code box -->
+  <rect x="200" y="15" width="360" height="62" rx="8" fill="#2c3e50"/>
+  <text x="380" y="37" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="#ecf0f1">Spark Application Code</text>
+  <text x="380" y="57" text-anchor="middle" font-family="monospace" font-size="11" fill="#3498db">rdd1.join(rdd2).reduce(...).filter(...)</text>
+
+  <!-- Arrow to Driver -->
+  <line x1="380" y1="77" x2="380" y2="112" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Driver box -->
+  <rect x="155" y="112" width="450" height="72" rx="8" fill="#8e44ad"/>
+  <text x="380" y="135" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="white">Driver (SparkContext)</text>
+  <line x1="165" y1="143" x2="595" y2="143" stroke="#7d3c98" stroke-width="1"/>
+  <text x="280" y="162" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#e8daef">DAGScheduler</text>
+  <text x="380" y="162" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#95a5a6">|</text>
+  <text x="480" y="162" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#e8daef">TaskScheduler</text>
+  <text x="380" y="178" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d2b4de">builds DAG, splits into stages, schedules tasks</text>
+
+  <!-- Arrow to Stages -->
+  <line x1="380" y1="184" x2="380" y2="214" stroke="#7f8c8d" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Stages row -->
+  <!-- Stage 1 -->
+  <rect x="30" y="214" width="195" height="78" rx="6" fill="#c0392b"/>
+  <text x="127" y="236" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Stage 1</text>
+  <text x="127" y="254" text-anchor="middle" font-family="monospace" font-size="11" fill="#fadbd8">rdd1.join(rdd2)</text>
+  <text x="127" y="272" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fadbd8">shuffle boundary</text>
+  <text x="127" y="284" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#f1948a">data redistribution</text>
+
+  <!-- Stage 2 -->
+  <rect x="282" y="214" width="195" height="78" rx="6" fill="#d35400"/>
+  <text x="379" y="236" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Stage 2</text>
+  <text x="379" y="254" text-anchor="middle" font-family="monospace" font-size="11" fill="#fdebd0">.reduce(...)</text>
+  <text x="379" y="272" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#fdebd0">aggregation</text>
+  <text x="379" y="284" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#f0b27a">per partition</text>
+
+  <!-- Stage 3 -->
+  <rect x="534" y="214" width="196" height="78" rx="6" fill="#1a6b3a"/>
+  <text x="632" y="236" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Stage 3</text>
+  <text x="632" y="254" text-anchor="middle" font-family="monospace" font-size="11" fill="#d5f5e3">.filter(...)</text>
+  <text x="632" y="272" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#d5f5e3">narrow transform</text>
+  <text x="632" y="284" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#a9dfbf">no shuffle needed</text>
+
+  <!-- Stage arrows -->
+  <line x1="225" y1="253" x2="280" y2="253" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="477" y1="253" x2="532" y2="253" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Tasks label -->
+  <text x="380" y="316" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7f8c8d">each stage splits into tasks (1 task per RDD partition) — dispatched to executors in parallel</text>
+
+  <!-- Arrow down to executors -->
+  <line x1="127" y1="292" x2="127" y2="344" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="379" y1="292" x2="379" y2="344" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="632" y1="292" x2="632" y2="344" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <!-- Executor boxes -->
+  <!-- Executor A -->
+  <rect x="30" y="344" width="195" height="90" rx="6" fill="#2980b9"/>
+  <text x="127" y="366" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Executor (Worker 1)</text>
+  <line x1="40" y1="374" x2="215" y2="374" stroke="#2471a3" stroke-width="1"/>
+  <rect x="42" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="68" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P0</text>
+  <rect x="101" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="127" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P1</text>
+  <rect x="160" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="186" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P2</text>
+  <text x="127" y="424" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#aed6f1">caches RDD partitions in heap</text>
+
+  <!-- Executor B -->
+  <rect x="282" y="344" width="195" height="90" rx="6" fill="#2980b9"/>
+  <text x="379" y="366" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Executor (Worker 2)</text>
+  <line x1="292" y1="374" x2="467" y2="374" stroke="#2471a3" stroke-width="1"/>
+  <rect x="294" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="320" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P3</text>
+  <rect x="353" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="379" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P4</text>
+  <rect x="412" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="438" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P5</text>
+  <text x="379" y="424" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#aed6f1">caches RDD partitions in heap</text>
+
+  <!-- Executor C -->
+  <rect x="534" y="344" width="196" height="90" rx="6" fill="#2980b9"/>
+  <text x="632" y="366" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="bold" fill="white">Executor (Worker 3)</text>
+  <line x1="544" y1="374" x2="720" y2="374" stroke="#2471a3" stroke-width="1"/>
+  <rect x="546" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="572" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P6</text>
+  <rect x="605" y="382" width="52" height="20" rx="3" fill="#f39c12"/>
+  <text x="631" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#2c3e50">Task P7</text>
+  <rect x="664" y="382" width="52" height="20" rx="3" fill="#7f8c8d"/>
+  <text x="690" y="396" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white">idle</text>
+  <text x="632" y="424" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#aed6f1">caches RDD partitions in heap</text>
+
+  <!-- Result arrow back to driver -->
+  <line x1="127" y1="434" x2="127" y2="465" stroke="#7f8c8d" stroke-width="1.5"/>
+  <line x1="379" y1="434" x2="379" y2="465" stroke="#7f8c8d" stroke-width="1.5"/>
+  <line x1="632" y1="434" x2="632" y2="465" stroke="#7f8c8d" stroke-width="1.5"/>
+  <line x1="127" y1="465" x2="632" y2="465" stroke="#7f8c8d" stroke-width="1.5"/>
+  <line x1="379" y1="465" x2="379" y2="490" stroke="#7f8c8d" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="450" y="462" font-family="sans-serif" font-size="10" fill="#7f8c8d">results collected back to Driver</text>
+
+  <!-- Caption -->
+  <text x="380" y="504" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7f8c8d">Each stage executes in sequence; tasks within a stage run in parallel across all available executors</text>
+</svg>
