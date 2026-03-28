@@ -3,7 +3,7 @@ theme: jekyll-theme-chirpy
 lang: en
 timezone: Asia/Singapore
 
-title: Srinivas Reddy
+title: Srinivas Reddy Alluri
 tagline: Cloud Data/ML Engineering Lead
 description: Writing about data engineering, distributed systems, streaming pipelines, and machine learning at scale.
 
@@ -17,7 +17,7 @@ twitter:
   username: mrsrinivas
 
 social:
-  name: Srinivas Reddy
+  name: Srinivas Reddy Alluri
   email: heysrini@outlook.com
   links:
     - https://github.com/mrsrinivas
