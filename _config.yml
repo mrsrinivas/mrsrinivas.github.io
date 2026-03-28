@@ -67,6 +67,15 @@ defaults:
       permalink: /:title/
       toc: true
 
+jekyll-archives:
+  enabled: [categories, tags]
+  layouts:
+    category: category
+    tag: tag
+  permalinks:
+    tag: /tags/:name/
+    category: /categories/:name/
+
 sass:
   style: compressed
 
