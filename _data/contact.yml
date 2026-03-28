@@ -1,0 +1,19 @@
+- type: github
+  icon: "fab fa-github"
+
+- type: linkedin
+  icon: "fab fa-linkedin"
+  url: "https://linkedin.com/in/mrsrinivas"
+
+- type: stackoverflow
+  icon: "fab fa-stack-overflow"
+  url: "https://stackoverflow.com/users/1592191/mrsrinivas"
+
+- type: twitter
+  icon: "fab fa-twitter"
+
+- type: email
+  icon: "fas fa-envelope"
+
+- type: rss
+  icon: "fas fa-rss"
