@@ -1,0 +1,10 @@
+<nav class="site-nav">
+  <div class="nav-container">
+    <a class="nav-brand" href="/">{{ site.title }}</a>
+    <ul class="nav-links">
+      <li><a href="/" {% if page.url == "/" %}class="active"{% endif %}>Blog</a></li>
+      <li><a href="/about/" {% if page.url == "/about/" %}class="active"{% endif %}>About</a></li>
+      <li><a href="/resume/" {% if page.url == "/resume/" %}class="active"{% endif %}>Resume</a></li>
+    </ul>
+  </div>
+</nav>

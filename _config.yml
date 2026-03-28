@@ -1,0 +1,35 @@
+title: Srinivas Reddy
+description: Cloud Data/ML Engineering Lead — writing about data engineering, distributed systems, and machine learning.
+url: "https://mrsrinivas.github.io"
+baseurl: ""
+author:
+  name: Srinivas Reddy
+  email: ""
+  github: mrsrinivas
+  linkedin: mrsrinivas
+  twitter: mrsrinivas
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .sass-cache
+  - Gruntfile.js
+  - package.json
+  - less/
+  - dist/
+  - mail/
