@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" font-family="sans-serif">
+  <!-- Background -->
+  <rect width="680" height="300" fill="#f8f9fa" rx="8"/>
+
+  <!-- Title -->
+  <text x="340" y="28" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a1a2e">Key-Based Routing — Same Key Always Lands in Same Partition</text>
+
+  <!-- Producer Records -->
+  <!-- Record A (key=user:42) -->
+  <rect x="30" y="55" width="150" height="44" rx="6" fill="#4a90d9" stroke="#2c6fad" stroke-width="1.5"/>
+  <text x="105" y="73" text-anchor="middle" font-size="11" fill="white" font-weight="bold">ProducerRecord</text>
+  <text x="105" y="90" text-anchor="middle" font-size="11" fill="#d0e8ff">key = "user:42"</text>
+
+  <!-- Record B (key=user:42) -->
+  <rect x="30" y="115" width="150" height="44" rx="6" fill="#4a90d9" stroke="#2c6fad" stroke-width="1.5"/>
+  <text x="105" y="133" text-anchor="middle" font-size="11" fill="white" font-weight="bold">ProducerRecord</text>
+  <text x="105" y="150" text-anchor="middle" font-size="11" fill="#d0e8ff">key = "user:42"</text>
+
+  <!-- Record C (key=user:7) -->
+  <rect x="30" y="200" width="150" height="44" rx="6" fill="#7b68ee" stroke="#5a4ec4" stroke-width="1.5"/>
+  <text x="105" y="218" text-anchor="middle" font-size="11" fill="white" font-weight="bold">ProducerRecord</text>
+  <text x="105" y="235" text-anchor="middle" font-size="11" fill="#ddd8ff">key = "user:7"</text>
+
+  <!-- Hash function box -->
+  <rect x="250" y="110" width="140" height="60" rx="6" fill="#2c3e50" stroke="#1a252f" stroke-width="1.5"/>
+  <text x="320" y="136" text-anchor="middle" font-size="12" fill="#ecf0f1" font-weight="bold">hash(key)</text>
+  <text x="320" y="155" text-anchor="middle" font-size="11" fill="#95a5a6">% num_partitions</text>
+
+  <!-- Arrows: records → hash -->
+  <line x1="180" y1="77" x2="250" y2="130" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="180" y1="137" x2="250" y2="140" stroke="#4a90d9" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="180" y1="222" x2="250" y2="155" stroke="#7b68ee" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- Partitions -->
+  <!-- P0 -->
+  <rect x="460" y="55" width="170" height="44" rx="6" fill="#27ae60" stroke="#1e8449" stroke-width="1.5"/>
+  <text x="545" y="73" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Partition 0</text>
+  <text x="545" y="90" text-anchor="middle" font-size="11" fill="#a9dfbf">→ user:42 messages</text>
+
+  <!-- P1 -->
+  <rect x="460" y="120" width="170" height="44" rx="6" fill="#e67e22" stroke="#b85c00" stroke-width="1.5"/>
+  <text x="545" y="138" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Partition 1</text>
+  <text x="545" y="155" text-anchor="middle" font-size="11" fill="#fde3c8">→ user:7 messages</text>
+
+  <!-- P2 -->
+  <rect x="460" y="185" width="170" height="44" rx="6" fill="#7f8c8d" stroke="#5d6d7e" stroke-width="1.5"/>
+  <text x="545" y="203" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Partition 2</text>
+  <text x="545" y="220" text-anchor="middle" font-size="11" fill="#d5d8dc">(other keys)</text>
+
+  <!-- Arrows: hash → partitions -->
+  <line x1="390" y1="130" x2="460" y2="77" stroke="#27ae60" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <line x1="390" y1="145" x2="460" y2="142" stroke="#e67e22" stroke-width="2" marker-end="url(#arrow-orange)"/>
+
+  <!-- Note -->
+  <text x="340" y="270" text-anchor="middle" font-size="11" fill="#555">Both "user:42" records always route to Partition 0 — ordering within that key is preserved.</text>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a90d9"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7b68ee"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#27ae60"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#e67e22"/>
+    </marker>
+  </defs>
+</svg>
