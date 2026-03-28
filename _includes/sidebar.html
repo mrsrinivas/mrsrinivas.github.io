@@ -1,20 +1,13 @@
 <!-- The Side Bar -->
 
 <aside aria-label="Sidebar" id="sidebar" class="d-flex flex-column align-items-end">
-  <header class="profile-wrapper" style="position: relative;">
-    {% unless site.theme_mode %}
-      <button type="button" class="btn btn-link nav-link" aria-label="Switch Mode" id="mode-toggle"
-        style="position: absolute; top: 0; right: 0; padding: 0.25rem;">
-        <i class="fas fa-adjust"></i>
-      </button>
-    {% endunless %}
-
+  <header class="profile-wrapper">
     <a href="{{ '/' | relative_url }}" id="avatar" class="rounded-circle">
       {%- if site.avatar != empty and site.avatar -%}
         {%- capture avatar_url -%}
           {% include media-url.html src=site.avatar %}
         {%- endcapture -%}
-        <img src="{{- avatar_url -}}" width="112" height="112" alt="avatar" onerror="this.style.display='none'">
+        <img src="{{- avatar_url -}}" width="160" height="160" alt="avatar" onerror="this.style.display='none'">
       {%- endif -%}
     </a>
 
