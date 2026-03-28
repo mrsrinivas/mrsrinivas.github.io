@@ -1,6 +1,6 @@
 ---
 icon: fas fa-info-circle
-order: 4
+order: 5
 ---
 
 I'm **Srinivas Reddy**, a Cloud Data/ML Engineering Lead with 12+ years of experience building large-scale data platforms, real-time streaming systems, and ML infrastructure.
