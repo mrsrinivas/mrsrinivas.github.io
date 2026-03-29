@@ -3,6 +3,7 @@ title: "Kafka Topics and Partitions — A Complete Guide"
 date: 2018-08-13 19:16:00 +0800
 categories: [Data Engineering, Messaging]
 tags: [kafka, distributed-systems, streaming, consumer-groups]
+mermaid: true
 ---
 
 Apache Kafka's power comes from a deceptively simple model: producers write messages to topics, consumers read from them. But the real machinery — ordering guarantees, parallel consumption, fault tolerance — all lives inside the partition. This post walks through the full picture, from producer routing decisions to offset management and rebalancing.
@@ -22,7 +23,36 @@ Partitions are the unit of:
 
 Before routing decisions happen, a producer passes a message through a pipeline of internal components — serializers, partitioner, and a per-partition record accumulator — before batching it to the broker.
 
-![Overview of producer components](/assets/img/posts/kafka-topics-partitions/producer-overview.svg){: width="760" height="710" }
+```mermaid
+flowchart TB
+    PR["ProducerRecord\nTopic | [Partition] | [Key] | Value"]
+    BR[("Kafka Broker")]
+    EXC["Throw Exception"]
+
+    subgraph internals["Producer Internals"]
+        direction TB
+        SER["Serializer"]
+        PART["Partitioner"]
+        B0["Topic A / Partition 0\nBatch 0 | Batch 1 | Batch 2"]
+        B1["Topic B / Partition 1\nBatch 0 | Batch 1 | Batch 2"]
+        FAIL{"Fail?"}
+        RETRY{"Retry?"}
+
+        SER --> PART
+        PART --> B0
+        PART --> B1
+        B0 ~~~ B1
+        FAIL -->|"Yes"| RETRY
+    end
+
+    PR -->|"Send()"| SER
+    B0 --> BR
+    B1 --> BR
+    BR -->|"When successful, return Metadata"| PR
+    BR --> FAIL
+    RETRY -->|"Yes — re-enqueue"| B0
+    RETRY -->|"If can't retry, throw exception"| EXC
+```
 
 A producer always targets a **topic**, never a partition directly. But every message lands in exactly one partition. The selection follows a strict priority chain:
 
@@ -30,13 +60,51 @@ A producer always targets a **topic**, never a partition directly. But every mes
 2. **Key-based hashing** — if you provide a message key, Kafka computes `hash(key) % num_partitions`. The same key always routes to the same partition. This gives you **per-key ordering** — useful when all events for a given entity (user, order, device) must be processed in sequence.
 3. **Round-robin (or sticky)** — no partition, no key? Kafka distributes messages evenly across partitions. Modern clients use a *sticky* strategy — batching to one partition until the batch is full, then rotating — to improve throughput without sacrificing fairness.
 
-![Key-based producer routing](/assets/img/posts/kafka-topics-partitions/producer-key-routing.svg){: width="680" height="300" }
+```mermaid
+flowchart LR
+    A["Record A\nkey='user:42'"]
+    B["Record B\nkey='user:42'"]
+    C["Record C\nkey='user:7'"]
+    H["hash(key) % num_partitions"]
+    P0["Partition 0\n(user:42 messages)"]
+    P1["Partition 1\n(user:7 messages)"]
+    P2["Partition 2\n(other keys)"]
+
+    A & B --> H
+    C --> H
+    H -->|"= 0 — same key, same partition"| P0
+    H -->|"= 1"| P1
+
+    style A fill:#3b82f6,color:#fff
+    style B fill:#3b82f6,color:#fff
+    style C fill:#a855f7,color:#fff
+    style P0 fill:#22c55e,color:#fff
+    style P1 fill:#f97316,color:#fff
+    style P2 fill:#9ca3af,color:#fff
+```
 
 The critical implication: **ordering is only guaranteed within a partition**. If you need strict global ordering across all messages, you're forced to use a single partition — which eliminates parallelism entirely. In practice, most systems choose a meaningful key (customer ID, device ID, entity ID) and accept per-key ordering as sufficient.
 
 **Round-robin** distributes messages evenly with no ordering guarantee — suited to high-throughput pipelines where per-message ordering doesn't matter.
 
-![Round-robin producer routing](/assets/img/posts/kafka-topics-partitions/producer-roundrobin.svg){: width="680" height="300" }
+```mermaid
+flowchart LR
+    R1["Record 1\nkey=null"]
+    R2["Record 2\nkey=null"]
+    R3["Record 3\nkey=null"]
+    R4["Record 4\nkey=null"]
+    RR["Partitioner\n(round-robin: P0→P1→P2…)"]
+    P0["Partition 0\nmsg 1, msg 4…"]
+    P1["Partition 1\nmsg 2, msg 5…"]
+    P2["Partition 2\nmsg 3, msg 6…"]
+
+    R1 & R2 & R3 & R4 --> RR
+    RR --> P0 & P1 & P2
+
+    style P0 fill:#22c55e,color:#fff
+    style P1 fill:#f97316,color:#fff
+    style P2 fill:#a855f7,color:#fff
+```
 
 ### Choosing Keys Wisely
 
@@ -64,19 +132,73 @@ Think of partitions as units of work and consumers as workers.
 
 Some consumers handle multiple partitions. Throughput is limited by the slowest consumer. This is a normal operating state — it still works, it just means some consumers carry more load.
 
-![Fewer consumers than partitions](/assets/img/posts/kafka-topics-partitions/fewer-consumers.svg){: width="620" height="320" }
+```mermaid
+flowchart LR
+    subgraph Topic["Topic (4 partitions)"]
+        P0["Partition 0"]
+        P1["Partition 1"]
+        P2["Partition 2"]
+        P3["Partition 3"]
+    end
+    subgraph Group["Consumer Group"]
+        C1["Consumer 1"]
+        C2["Consumer 2"]
+    end
+    P0 --> C1
+    P1 --> C1
+    P2 --> C2
+    P3 --> C2
+```
 
 ### Consumers equal partitions
 
 Clean 1:1 mapping. Each consumer owns exactly one partition. This is the ideal steady state for maximum parallelism with no idle capacity.
 
-![Equal consumers and partitions](/assets/img/posts/kafka-topics-partitions/equal-consumers.svg){: width="620" height="340" }
+```mermaid
+flowchart LR
+    subgraph Topic["Topic T1 (4 partitions)"]
+        P0["Partition 0"]
+        P1["Partition 1"]
+        P2["Partition 2"]
+        P3["Partition 3"]
+    end
+    subgraph Group["Consumer Group 1"]
+        C1["Consumer 1"]
+        C2["Consumer 2"]
+        C3["Consumer 3"]
+        C4["Consumer 4"]
+    end
+    P0 --> C1
+    P1 --> C2
+    P2 --> C3
+    P3 --> C4
+```
 
 ### More consumers than partitions
 
 The extra consumers sit idle. Kafka cannot split a single partition across multiple consumers within the same group — a partition is always owned by at most one consumer per group.
 
-![More consumers than partitions](/assets/img/posts/kafka-topics-partitions/more-consumers.svg){: width="620" height="390" }
+```mermaid
+flowchart LR
+    subgraph Topic["Topic T1 (4 partitions)"]
+        P0["Partition 0"]
+        P1["Partition 1"]
+        P2["Partition 2"]
+        P3["Partition 3"]
+    end
+    subgraph Group["Consumer Group 1"]
+        C1["Consumer 1"]
+        C2["Consumer 2"]
+        C3["Consumer 3"]
+        C4["Consumer 4"]
+        C5["Consumer 5\n(idle — no partition assigned)"]
+    end
+    P0 --> C1
+    P1 --> C2
+    P2 --> C3
+    P3 --> C4
+    style C5 fill:#d1d5db,color:#374151,stroke:#9ca3af,stroke-dasharray:5 5
+```
 
 If you have 5 consumers and 4 partitions, the 5th consumer does nothing. Adding more consumers beyond partition count gives zero throughput benefit.
 

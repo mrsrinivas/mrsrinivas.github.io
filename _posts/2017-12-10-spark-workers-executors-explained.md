@@ -3,6 +3,7 @@ title: "Spark Workers, Executors, and the Cluster Runtime — A Visual Guide"
 date: 2017-12-10 10:00:00 +0800
 categories: [Data Engineering, Spark]
 tags: [spark, distributed-systems, cluster-computing, yarn]
+mermaid: true
 ---
 
 Three terms — worker, worker instance, and executor — appear constantly in Spark documentation, conference talks, and configuration files. They are easy to conflate because they all refer to components that run on cluster machines. They are not the same thing, and understanding the distinction matters when sizing clusters, tuning memory, and diagnosing slow jobs.
@@ -11,7 +12,28 @@ Three terms — worker, worker instance, and executor — appear constantly in S
 
 In Spark Standalone mode there are two roles: a **Master** and one or more **Workers**. The Master is the cluster manager — it tracks available resources and assigns them to applications. Workers are the resource providers — they report their CPU and memory to the Master and spawn Executors when asked.
 
-![Spark Standalone cluster — Master, Workers, and Executors](/assets/img/posts/spark-workers-executors/spark-standalone-cluster.svg){: width="760" height="500" }
+```mermaid
+graph TB
+    D["Driver Program\n(SparkContext / DAGScheduler / TaskScheduler)"]
+
+    M["Master Node\n(Cluster Manager — assigns resources to apps)"]
+
+    subgraph W1["Worker Node 1"]
+        E1["Executor JVM 1\n● Task  ● Task  ○ idle"]
+        E2["Executor JVM 2\n● Task  ● Task  ● Task"]
+    end
+    subgraph W2["Worker Node 2"]
+        E3["Executor JVM 1\n● Task  ● Task  ● Task"]
+        E4["Executor JVM 2\n● Task  ● Task  ● Task"]
+    end
+    subgraph W3["Worker Node 3"]
+        E5["Executor JVM 1\n● Task  ● Task  ● Task"]
+        E6["Executor JVM 2\n● Task  ● Task  ● Task"]
+    end
+
+    D -->|"submits app"| M
+    M --> W1 & W2 & W3
+```
 
 A few things worth noting in this picture:
 
@@ -36,7 +58,28 @@ You can run multiple worker processes on a single machine, but there is rarely a
 
 This is the more interesting question. A Worker process can spawn **multiple Executor processes** — each one is a separate JVM — as long as the machine has sufficient CPU cores, memory, and storage.
 
-![Worker node — one worker process with multiple executor JVMs](/assets/img/posts/spark-workers-executors/worker-node-detail.svg){: width="700" height="360" }
+```mermaid
+graph TB
+    subgraph Machine["Physical / Virtual Machine"]
+        WP["Worker Process\n(1 per node — manages resources, spawns executors)"]
+
+        subgraph E1["Executor JVM 1  |  Heap: 4 GB  |  Cores: 3"]
+            T1A["● Task (running)"]
+            T1B["● Task (running)"]
+            T1C["○ (idle)"]
+        end
+        subgraph E2["Executor JVM 2  |  Heap: 4 GB  |  Cores: 3"]
+            T2A["● Task (running)"]
+            T2B["○ (idle)"]
+            T2C["○ (idle)"]
+        end
+        subgraph E3["Executor JVM 3  (not started yet)"]
+            E3N["spawned when workload demands\nand resources allow"]
+        end
+
+        WP --> E1 & E2 & E3
+    end
+```
 
 The number of executors running on a worker node at any point in time depends on two things:
 
@@ -67,7 +110,36 @@ val result = rdd1
 
 Spark's execution model turns this into a **DAG of RDD operations**, splits the DAG into **Stages** at shuffle boundaries, and breaks each stage into **Tasks** — one per RDD partition — that run in parallel on Executors.
 
-![Spark runtime — DAG, stages, and parallel task execution](/assets/img/posts/spark-workers-executors/spark-runtime-flow.svg){: width="760" height="510" }
+```mermaid
+flowchart TB
+    Code["Spark Application Code\nrdd1.join(rdd2).reduce(...).filter(...)"]
+
+    subgraph Driver["Driver / SparkContext"]
+        DAG["DAGScheduler — builds DAG, splits into stages"]
+        TSched["TaskScheduler — assigns tasks to executor slots"]
+        DAG --> TSched
+    end
+
+    subgraph Stages["Stages (sequential)"]
+        S1["Stage 1: rdd1.join(rdd2)\n🔀 shuffle boundary — data redistribution"]
+        S2["Stage 2: .reduce(...)\naggregation per partition"]
+        S3["Stage 3: .filter(...)\nnarrow transform, no shuffle needed"]
+        S1 --> S2 --> S3
+    end
+
+    subgraph Executors["Executors (parallel task execution)"]
+        EA["Executor A — Worker 1\nTask P0 | Task P1 | Task P2"]
+        EB["Executor B — Worker 2\nTask P3 | Task P4 | Task P5"]
+        EC["Executor C — Worker 3\nTask P6 | Task P7 | ○ idle"]
+    end
+
+    R["Results collected → Driver"]
+
+    Code --> Driver
+    Driver --> Stages
+    Stages --> Executors
+    Executors --> R
+```
 
 Walking through the diagram:
 
