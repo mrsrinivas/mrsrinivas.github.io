@@ -2,8 +2,12 @@
 title: "The AI Stack Decoded: Every Layer of a Modern AI Application (And Who Should Own What)"
 date: 2026-03-29 09:00:00 +0800
 categories: [AI, Architecture]
-tags: [ai, llm, agents, mcp, rag, architecture, enterprise-ai, langchain, aws-bedrock]
+tags: [ai, llm, agents, mcp, rag, fine-tuning, architecture, enterprise-ai, langchain, aws-bedrock]
 mermaid: true
+description: "The root cause is usually the same: no clear map of the stack. The modern AI application has 7 distinct layers — each with a different answer to build vs. buy. From foundation models to the UI your users see, here's the map."
+image:
+  path: /assets/img/posts/ai-architecture-layers/cover.png
+  alt: The Modern AI Application Stack — 7 Layers
 ---
 
 There's a pattern that keeps showing up in AI teams right now: someone decides to build a layer that, six months later, ships as a managed feature from AWS, Anthropic, or a framework update. Custom model routing. Hand-rolled vector search. Bespoke auth middleware for agent workflows. The engineering is sound — but the timing is off, and the layer gets abandoned or rewritten.
@@ -20,31 +24,38 @@ Think of any AI product you've used — a chatbot, a coding assistant, an AI ana
 
 <div style="width:100%;margin:1.5rem 0;font-size:0.9rem">
   <div style="background:#e0f2fe;border:2px solid #0284c7;border-radius:6px;padding:11px 18px;margin:3px 0;color:#0c4a6e;text-align:center">
-    <strong>🖥️ LAYER 7 · User Interface</strong> &nbsp;—&nbsp; Chat UI &nbsp;·&nbsp; Voice &nbsp;·&nbsp; Web App &nbsp;·&nbsp; Mobile &nbsp;·&nbsp; Embedded Widget
+    <strong>🖥️ LAYER 7 · User Interface</strong> 
+    <br> Chat UI &nbsp;·&nbsp; Voice &nbsp;·&nbsp; Web App &nbsp;·&nbsp; Mobile &nbsp;·&nbsp; Embedded Widget
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#fee2e2;border:2px solid #ef4444;border-radius:6px;padding:11px 18px;margin:3px 0;color:#991b1b;text-align:center">
-    <strong>🔐 LAYER 6 · Identity &amp; Auth</strong> &nbsp;—&nbsp; Auth0 &nbsp;·&nbsp; Okta &nbsp;·&nbsp; AWS Cognito &nbsp;·&nbsp; Azure Entra ID
+    <strong>🔐 LAYER 6 · Identity &amp; Auth</strong>
+    <br> Auth0 &nbsp;·&nbsp; Okta &nbsp;·&nbsp; AWS Cognito &nbsp;·&nbsp; Azure Entra ID
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#ede9fe;border:2px solid #8b5cf6;border-radius:6px;padding:11px 18px;margin:3px 0;color:#4c1d95;text-align:center">
-    <strong>🤖 LAYER 5 · Agent Orchestration</strong> &nbsp;—&nbsp; LangGraph &nbsp;·&nbsp; CrewAI &nbsp;·&nbsp; AutoGen &nbsp;·&nbsp; LlamaIndex &nbsp;·&nbsp; Claude Skills
+    <strong>🤖 LAYER 5 · Agent Orchestration</strong>
+    <br> LangGraph &nbsp;·&nbsp; CrewAI &nbsp;·&nbsp; AutoGen &nbsp;·&nbsp; LlamaIndex &nbsp;·&nbsp; Claude Skills
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#fce7f3;border:2px solid #ec4899;border-radius:6px;padding:11px 18px;margin:3px 0;color:#9d174d;text-align:center">
-    <strong>🔧 LAYER 4 · Tools &amp; Integrations</strong> &nbsp;—&nbsp; MCP Servers &nbsp;·&nbsp; Function Calling &nbsp;·&nbsp; Plugins &nbsp;·&nbsp; APIs
+    <strong>🔧 LAYER 4 · Tools &amp; Integrations</strong>
+    <br> MCP Servers &nbsp;·&nbsp; Function Calling &nbsp;·&nbsp; Plugins &nbsp;·&nbsp; APIs
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#d1fae5;border:2px solid #059669;border-radius:6px;padding:11px 18px;margin:3px 0;color:#065f46;text-align:center">
-    <strong>💾 LAYER 3 · Context &amp; Memory</strong> &nbsp;—&nbsp; RAG &nbsp;·&nbsp; Pinecone &nbsp;·&nbsp; Weaviate &nbsp;·&nbsp; pgvector &nbsp;·&nbsp; Session State
+    <strong>💾 LAYER 3 · Context &amp; Memory</strong>
+    <br> RAG &nbsp;·&nbsp; Pinecone &nbsp;·&nbsp; Weaviate &nbsp;·&nbsp; pgvector &nbsp;·&nbsp; Session State
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#dbeafe;border:2px solid #3b82f6;border-radius:6px;padding:11px 18px;margin:3px 0;color:#1e40af;text-align:center">
-    <strong>🌐 LAYER 2 · Model Access API</strong> &nbsp;—&nbsp; AWS Bedrock &nbsp;·&nbsp; Azure OpenAI &nbsp;·&nbsp; Vertex AI &nbsp;·&nbsp; Direct APIs
+    <strong>🌐 LAYER 2 · Model Access API</strong>
+    <br> AWS Bedrock &nbsp;·&nbsp; Azure OpenAI &nbsp;·&nbsp; Vertex AI &nbsp;·&nbsp; Direct APIs
   </div>
   <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
   <div style="background:#fef3c7;border:2px solid #d97706;border-radius:6px;padding:11px 18px;margin:3px 0;color:#92400e;text-align:center">
-    <strong>⚡ LAYER 1 · Foundation Models</strong> &nbsp;—&nbsp; Claude &nbsp;·&nbsp; GPT-4o &nbsp;·&nbsp; Gemini &nbsp;·&nbsp; Llama &nbsp;·&nbsp; Mistral
+    <strong>⚡ LAYER 1 · Foundation Models</strong>
+    <br> Claude &nbsp;·&nbsp; GPT-4o &nbsp;·&nbsp; Gemini &nbsp;·&nbsp; Llama &nbsp;·&nbsp; Mistral
   </div>
 </div>
 
@@ -67,7 +78,33 @@ The major players as of early 2026:
 | **Mistral** | Mistral Large, Mixtral | Lean, fast, open-weight |
 | **Cohere** | Command R+ | Optimized for enterprise RAG |
 
-Unless you're Anthropic, OpenAI, or Google, you're not training foundation models — the cost is in the hundreds of millions of dollars. This layer is "buy," full stop.
+Unless you're Anthropic, OpenAI, or Google, you're not training foundation models — the cost is in the hundreds of millions of dollars. That layer is "buy," full stop. But there's a meaningful customisation step between "buy a raw model" and "call the API as-is" — and that's where a lot of teams leave value on the table.
+
+#### Layer 1.5: Model Fine-Tuning — When the Base Model Isn't Enough
+
+Fine-tuning specialises a foundation model on your own labeled data — without starting from scratch. Most teams reach for it too early. The decision ladder:
+
+```mermaid
+flowchart TD
+    A([Start:\n model behaviour not good enough]):::start
+    B["1. Prompt engineering + few-shot examples"]:::step
+    C["2. RAG for current / large-scale knowledge"]:::step
+    D["3. Fine-tuning curate data, train, evaluate"]:::step
+    OK(["✅ Good enough ship it"]):::done
+
+    A --> B
+    B -->|still not good enough| C
+    C -->|still not good enough| D
+    B -->|good enough| OK
+    C -->|good enough| OK
+    D --> OK
+
+    classDef start fill:#1e293b,stroke:#475569,color:#f8fafc
+    classDef step fill:#fef3c7,stroke:#d97706,color:#92400e
+    classDef done fill:#d1fae5,stroke:#059669,color:#065f46
+```
+
+The fine-tuning *infrastructure* is increasingly "buy" (Bedrock, Vertex, Azure all offer it as a managed service). The data curation and evaluation pipeline is firmly "build" — and it's the part that takes the most time.
 
 ---
 
@@ -430,6 +467,8 @@ Honest caveat: self-hosting models is harder than the open-source community some
 ## What's Actually Shifting Right Now
 
 A few forces are reshaping the stack in 2026. I'll flag my confidence level on each, because some of these I'm genuinely less sure about than they might sound.
+
+**Fine-tuning is becoming accessible, but RAG still wins more often.** The infrastructure for fine-tuning has commoditized fast — Bedrock, Vertex, and Azure all offer it as a managed service now. But the pattern I keep seeing is teams reaching for fine-tuning before exhausting what good RAG and prompt engineering can do. The right call: treat fine-tuning as a tool you graduate to when the evidence demands it, not a first step.
 
 **MCP is eating custom integrations.** Fairly confident here. The network effect is real — as more tools publish MCP servers, the ecosystem compounds. Building bespoke tool connectors is starting to feel like writing custom REST parsers in 2015.
 
