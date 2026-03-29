@@ -26,8 +26,11 @@ Before routing decisions happen, a producer passes a message through a pipeline 
 ```mermaid
 flowchart TB
     PR["ProducerRecord\nTopic | [Partition] | [Key] | Value"]
+    BR[("Kafka Broker")]
+    EXC["Throw Exception"]
 
     subgraph internals["Producer Internals"]
+        direction TB
         SER["Serializer"]
         PART["Partitioner"]
         B0["Topic A / Partition 0\nBatch 0 | Batch 1 | Batch 2"]
@@ -36,18 +39,18 @@ flowchart TB
         RETRY{"Retry?"}
 
         SER --> PART
-        PART --> B0 & B1
+        PART --> B0
+        PART --> B1
+        B0 ~~~ B1
         FAIL -->|"Yes"| RETRY
-        RETRY -->|"Yes"| B0 & B1
     end
 
-    BR[("Kafka Broker")]
-    EXC["Throw Exception"]
-
     PR -->|"Send()"| SER
-    B0 & B1 --> BR
+    B0 --> BR
+    B1 --> BR
     BR -->|"When successful, return Metadata"| PR
     BR --> FAIL
+    RETRY -->|"Yes — re-enqueue"| B0
     RETRY -->|"If can't retry, throw exception"| EXC
 ```
 
