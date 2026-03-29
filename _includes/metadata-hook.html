@@ -3,10 +3,31 @@
     width: 12.5rem !important;
     height: 12.5rem !important;
     overflow: hidden !important;
+    background-color: #ffffff;
+    border-radius: 50% !important;
+    transition: box-shadow 0.3s ease;
   }
   #avatar img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
+    object-position: center top !important;
+  }
+
+  /* Light mode: match sidebar background */
+  #avatar {
+    background-color: rgb(246, 248, 250);
+  }
+
+  /* Dark mode: match dark sidebar background and mute the ring */
+  [data-mode="dark"] #avatar {
+    background-color: rgb(30, 30, 30);
+    box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 0px 2px !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    html:not([data-mode]) #avatar {
+      background-color: rgb(30, 30, 30);
+      box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 0px 2px !important;
+    }
   }
 </style>
