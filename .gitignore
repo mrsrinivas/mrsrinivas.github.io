@@ -2,4 +2,6 @@
 /nbproject/
 /node_modules/
 .idea/
+.claude/
+_site/
 
