@@ -24,19 +24,32 @@ Partitions are the unit of:
 Before routing decisions happen, a producer passes a message through a pipeline of internal components — serializers, partitioner, and a per-partition record accumulator — before batching it to the broker.
 
 ```mermaid
-flowchart LR
-    PR["ProducerRecord\n(topic, key, value)"]
-    SER["Serializer\n(key + value)"]
-    PART["Partitioner"]
-    B0["Partition 0\nBuffer"]
-    B1["Partition 1\nBuffer"]
-    B2["Partition 2\nBuffer"]
-    NET["Network Sender\n(batches)"]
-    BR["Broker"]
+flowchart TB
+    PR["ProducerRecord\n(topic, [partition], [key], value)"]
 
-    PR --> SER --> PART
-    PART --> B0 & B1 & B2
-    B0 & B1 & B2 --> NET --> BR
+    subgraph internals["Producer Internals"]
+        SER["Serializer"]
+        PART["Partitioner"]
+        B0["Topic A / Partition 0\nBatch 0 | Batch 1 | Batch 2"]
+        B1["Topic B / Partition 1\nBatch 0 | Batch 1 | Batch 2"]
+        FAIL{"Fail?"}
+        RETRY{"Retry?"}
+        SER --> PART
+        PART --> B0 & B1
+    end
+
+    BR[("Kafka Broker")]
+    META["Metadata"]
+    EXC(["Throw Exception"])
+
+    PR --> SER
+    B0 & B1 --> BR
+    BR -->|"success — return Metadata"| META
+    META --> PR
+    BR -->|"error"| FAIL
+    FAIL -->|"yes"| RETRY
+    RETRY --> B0 & B1
+    FAIL -->|"no"| EXC
 ```
 
 A producer always targets a **topic**, never a partition directly. But every message lands in exactly one partition. The selection follows a strict priority chain:
@@ -47,11 +60,25 @@ A producer always targets a **topic**, never a partition directly. But every mes
 
 ```mermaid
 flowchart LR
-    P["Producer\n(key = 'user-42')"] --> H["Partitioner\nhash('user-42') % 3"]
-    H -->|"= 0"| P0["Partition 0"]
-    H -->|"= 1"| P1["Partition 1 ✓"]
-    H -->|"= 2"| P2["Partition 2"]
-    style P1 fill:#22c55e,color:#fff
+    A["Record A\nkey='user:42'"]
+    B["Record B\nkey='user:42'"]
+    C["Record C\nkey='user:7'"]
+    H["hash(key) % num_partitions"]
+    P0["Partition 0\n(user:42 messages)"]
+    P1["Partition 1\n(user:7 messages)"]
+    P2["Partition 2\n(other keys)"]
+
+    A & B --> H
+    C --> H
+    H -->|"= 0 — same key, same partition"| P0
+    H -->|"= 1"| P1
+
+    style A fill:#3b82f6,color:#fff
+    style B fill:#3b82f6,color:#fff
+    style C fill:#a855f7,color:#fff
+    style P0 fill:#22c55e,color:#fff
+    style P1 fill:#f97316,color:#fff
+    style P2 fill:#9ca3af,color:#fff
 ```
 
 The critical implication: **ordering is only guaranteed within a partition**. If you need strict global ordering across all messages, you're forced to use a single partition — which eliminates parallelism entirely. In practice, most systems choose a meaningful key (customer ID, device ID, entity ID) and accept per-key ordering as sufficient.
@@ -60,10 +87,21 @@ The critical implication: **ordering is only guaranteed within a partition**. If
 
 ```mermaid
 flowchart LR
-    P["Producer\n(no key)"] --> RR["Partitioner\n(sticky round-robin)"]
-    RR --> P0["Partition 0"]
-    RR --> P1["Partition 1"]
-    RR --> P2["Partition 2"]
+    R1["Record 1\nkey=null"]
+    R2["Record 2\nkey=null"]
+    R3["Record 3\nkey=null"]
+    R4["Record 4\nkey=null"]
+    RR["Partitioner\n(round-robin: P0→P1→P2…)"]
+    P0["Partition 0\nmsg 1, msg 4…"]
+    P1["Partition 1\nmsg 2, msg 5…"]
+    P2["Partition 2\nmsg 3, msg 6…"]
+
+    R1 & R2 & R3 & R4 --> RR
+    RR --> P0 & P1 & P2
+
+    style P0 fill:#22c55e,color:#fff
+    style P1 fill:#f97316,color:#fff
+    style P2 fill:#a855f7,color:#fff
 ```
 
 ### Choosing Keys Wisely
@@ -116,19 +154,22 @@ Clean 1:1 mapping. Each consumer owns exactly one partition. This is the ideal s
 
 ```mermaid
 flowchart LR
-    subgraph Topic["Topic (3 partitions)"]
+    subgraph Topic["Topic T1 (4 partitions)"]
         P0["Partition 0"]
         P1["Partition 1"]
         P2["Partition 2"]
+        P3["Partition 3"]
     end
-    subgraph Group["Consumer Group"]
+    subgraph Group["Consumer Group 1"]
         C1["Consumer 1"]
         C2["Consumer 2"]
         C3["Consumer 3"]
+        C4["Consumer 4"]
     end
     P0 --> C1
     P1 --> C2
     P2 --> C3
+    P3 --> C4
 ```
 
 ### More consumers than partitions
@@ -137,21 +178,24 @@ The extra consumers sit idle. Kafka cannot split a single partition across multi
 
 ```mermaid
 flowchart LR
-    subgraph Topic["Topic (3 partitions)"]
+    subgraph Topic["Topic T1 (4 partitions)"]
         P0["Partition 0"]
         P1["Partition 1"]
         P2["Partition 2"]
+        P3["Partition 3"]
     end
-    subgraph Group["Consumer Group"]
+    subgraph Group["Consumer Group 1"]
         C1["Consumer 1"]
         C2["Consumer 2"]
         C3["Consumer 3"]
-        C4["Consumer 4 — idle"]
+        C4["Consumer 4"]
+        C5["Consumer 5\n(idle — no partition assigned)"]
     end
     P0 --> C1
     P1 --> C2
     P2 --> C3
-    style C4 fill:#fca5a5,color:#7f1d1d
+    P3 --> C4
+    style C5 fill:#d1d5db,color:#374151,stroke:#9ca3af,stroke-dasharray:5 5
 ```
 
 If you have 5 consumers and 4 partitions, the 5th consumer does nothing. Adding more consumers beyond partition count gives zero throughput benefit.

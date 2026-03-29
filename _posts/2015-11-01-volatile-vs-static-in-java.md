@@ -3,6 +3,7 @@ title: "volatile vs static in Java — Thread Visibility Explained"
 date: 2015-11-01 10:00:00 +0800
 categories: [Software Engineering, Java]
 tags: [java, concurrency, multithreading, jvm]
+mermaid: true
 ---
 
 `static` and `volatile` both deal with shared data, but they solve completely different problems. Conflating them is one of the most common sources of subtle multithreading bugs in Java. This post explains exactly what each does, why the difference matters, and when to use each.
@@ -13,7 +14,24 @@ Modern CPUs do not read from RAM on every variable access — they maintain L1 a
 
 This is a deliberate performance optimisation. It also means that two threads running on different CPU cores can hold **different values for the same variable** at the same time.
 
-![Java Memory Model — CPU caches per core](/assets/img/posts/volatile-vs-static-java/java-memory-model.svg){: width="760" height="490" }
+```mermaid
+graph TB
+    subgraph MM["Main Memory (Heap)"]
+        MV["static int counter = 0\nvolatile boolean flag = false\n— volatile is always read/written here, never cached —"]
+    end
+    subgraph Core1["CPU Core 1"]
+        C1["L1/L2 Cache\ncounter = 5\n(local copy, may differ from main memory)"]
+        T1["Thread 1\ncounter++\n// reads cache: 5 → cache now: 6"]
+        C1 --> T1
+    end
+    subgraph Core2["CPU Core 2"]
+        C2["L1/L2 Cache\ncounter = 0\n(stale — unaware of Thread 1 update)"]
+        T2["Thread 2\nprint(counter)\n// reads cache → prints 0, expects 5!"]
+        C2 --> T2
+    end
+    MM <-->|"write-back (may delay)"| C1
+    MM <-->|"read (may be stale)"| C2
+```
 
 This is the Java Memory Model (JMM) in one picture. Main memory holds the authoritative value. Each CPU core has its own cache. Threads read from and write to their core's cache, not necessarily to main memory.
 
@@ -29,7 +47,26 @@ class Counter {
 
 What `static` does **not** do: it gives no guarantee about memory visibility across threads. The JVM may cache a `static` variable in a CPU register for performance. Thread 1 can update the value and Thread 2 may never see it, because Thread 2 is reading from its own core's cache.
 
-![static variable — Thread 2 reads a stale cached value](/assets/img/posts/volatile-vs-static-java/static-stale-read.svg){: width="700" height="370" }
+```mermaid
+graph TB
+    subgraph MM["Main Memory"]
+        MV["static int counter = 0"]
+    end
+    subgraph T1Box["Thread 1 Cache (CPU Core 1)"]
+        C1["counter = 5\n(updated locally, not flushed)"]
+    end
+    subgraph T2Box["Thread 2 Cache (CPU Core 2)"]
+        C2["counter = 0\n(stale — never saw update)"]
+    end
+    R["Thread 2 reads: if (counter == 5) ...\n→ reads 0 — condition false! ❌  STALE READ"]
+
+    MM -->|"initial load"| C1
+    MM -->|"initial load"| C2
+    C2 --> R
+
+    style C2 fill:#fca5a5,color:#7f1d1d
+    style R fill:#fca5a5,color:#7f1d1d
+```
 
 Thread 1 increments `counter` to 5. Thread 2 reads `counter` and gets 0. Thread 1's update never left its CPU cache, so Thread 2 has no way to observe it. Both threads are using the same `static` variable — they just each have a stale copy.
 
@@ -53,7 +90,27 @@ class Server {
 }
 ```
 
-![volatile variable — both threads read from main memory](/assets/img/posts/volatile-vs-static-java/volatile-fresh-read.svg){: width="700" height="340" }
+```mermaid
+graph TB
+    subgraph MM["Main Memory"]
+        MV["volatile boolean flag = true\n(single authoritative source)"]
+    end
+    subgraph T1Box["Thread 1"]
+        T1["flag = true\n(writes directly to main memory\nno local cache for volatile)"]
+    end
+    subgraph T2Box["Thread 2"]
+        T2["if (flag) { ... }\n(reads directly from main memory\nalways sees latest value)"]
+        R["flag = true — condition holds! ✓  VISIBLE"]
+        T2 --> R
+    end
+
+    T1 -->|"write directly to main memory"| MM
+    MM -->|"read directly from main memory"| T2
+
+    style R fill:#bbf7d0,color:#14532d
+    style T1Box fill:#dcfce7
+    style T2Box fill:#dbeafe
+```
 
 Thread 1 sets `flag = true`. Because `flag` is `volatile`, this write goes directly to main memory. Thread 2 reads `flag` directly from main memory on every access. It immediately sees the update.
 
@@ -106,7 +163,34 @@ counter++;  // looks atomic, is NOT
 
 Two threads can interleave these three operations and produce the wrong result:
 
-![volatile does not guarantee atomicity — counter++ race condition](/assets/img/posts/volatile-vs-static-java/volatile-not-atomic.svg){: width="700" height="360" }
+```mermaid
+sequenceDiagram
+    participant T1 as Thread 1
+    participant MM as Main Memory
+    participant T2 as Thread 2
+
+    Note over MM: counter = 0
+
+    rect rgb(219,234,254)
+        Note over T1,T2: Step 1 — READ
+        T1->>MM: reads counter = 0
+        T2->>MM: reads counter = 0
+    end
+    rect rgb(254,249,195)
+        Note over T1,T2: Step 2 — INCREMENT (local)
+        Note over T1: 0 + 1 = 1
+        Note over MM: counter = 0 (unchanged)
+        Note over T2: 0 + 1 = 1
+    end
+    rect rgb(254,226,226)
+        Note over T1,T2: Step 3 — WRITE
+        T1->>MM: writes counter = 1
+        T2->>MM: writes counter = 1 (overwrites!)
+    end
+
+    Note over MM: RESULT: counter = 1 ❌ (expected 2)
+    Note over T1,T2: Both incremented from 0 — one update lost
+```
 
 Both threads read `counter = 0`, both increment to 1, both write 1. The expected result is 2. You get 1. `volatile` prevented caching — both threads correctly saw `counter = 0` — but that only made the race condition more deterministic. It did not prevent it.
 
