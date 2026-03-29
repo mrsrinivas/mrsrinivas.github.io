@@ -1,0 +1,17 @@
+---
+---
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* Custom overrides */
+
+#topbar-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
