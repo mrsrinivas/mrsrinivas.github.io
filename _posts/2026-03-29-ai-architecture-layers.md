@@ -5,7 +5,7 @@ categories: [AI, Architecture]
 tags: [ai, llm, agents, mcp, rag, fine-tuning, architecture, enterprise-ai, langchain, aws-bedrock]
 mermaid: true
 image:
-  path: /assets/img/posts/ai-architecture-layers/cover.png
+  path: /assets/img/posts/ai-architecture-layers/cover.jpg
   alt: The Modern AI Application Stack — 7 Layers
 ---
 
