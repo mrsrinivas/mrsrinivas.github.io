@@ -14,13 +14,20 @@
     object-position: center top !important;
   }
 
-  /* Dark mode: ring to frame the white-background photo */
+  /* Light mode: match sidebar background */
+  #avatar {
+    background-color: rgb(246, 248, 250);
+  }
+
+  /* Dark mode: match dark sidebar background and mute the ring */
   [data-mode="dark"] #avatar {
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+    background-color: rgb(30, 30, 30);
+    box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 0px 2px !important;
   }
   @media (prefers-color-scheme: dark) {
     html:not([data-mode]) #avatar {
-      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+      background-color: rgb(30, 30, 30);
+      box-shadow: rgba(100, 100, 100, 0.4) 0px 0px 0px 2px !important;
     }
   }
 </style>
