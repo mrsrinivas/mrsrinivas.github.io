@@ -16,39 +16,7 @@ The cloud computing era gave us a useful mental model: IaaS, PaaS, SaaS. You kne
 
 ## The Seven Layers of an AI Application
 
-Think of any AI product you've used — a chatbot, a coding assistant, an AI analyst inside your SaaS tool. Behind that simple interface sits a surprisingly deep stack. Here's how it breaks down:
-
-<div style="width:100%;margin:1.5rem 0;font-size:0.9rem">
-  <div style="background:#e0f2fe;border:2px solid #0284c7;border-radius:6px;padding:11px 18px;margin:3px 0;color:#0c4a6e;text-align:center">
-    <strong>🖥️ LAYER 7 · User Interface</strong> &nbsp;—&nbsp; Chat UI &nbsp;·&nbsp; Voice &nbsp;·&nbsp; Web App &nbsp;·&nbsp; Mobile &nbsp;·&nbsp; Embedded Widget
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#fee2e2;border:2px solid #ef4444;border-radius:6px;padding:11px 18px;margin:3px 0;color:#991b1b;text-align:center">
-    <strong>🔐 LAYER 6 · Identity &amp; Auth</strong> &nbsp;—&nbsp; Auth0 &nbsp;·&nbsp; Okta &nbsp;·&nbsp; AWS Cognito &nbsp;·&nbsp; Azure Entra ID
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#ede9fe;border:2px solid #8b5cf6;border-radius:6px;padding:11px 18px;margin:3px 0;color:#4c1d95;text-align:center">
-    <strong>🤖 LAYER 5 · Agent Orchestration</strong> &nbsp;—&nbsp; LangGraph &nbsp;·&nbsp; CrewAI &nbsp;·&nbsp; AutoGen &nbsp;·&nbsp; LlamaIndex &nbsp;·&nbsp; Claude Skills
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#fce7f3;border:2px solid #ec4899;border-radius:6px;padding:11px 18px;margin:3px 0;color:#9d174d;text-align:center">
-    <strong>🔧 LAYER 4 · Tools &amp; Integrations</strong> &nbsp;—&nbsp; MCP Servers &nbsp;·&nbsp; Function Calling &nbsp;·&nbsp; Plugins &nbsp;·&nbsp; APIs
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#d1fae5;border:2px solid #059669;border-radius:6px;padding:11px 18px;margin:3px 0;color:#065f46;text-align:center">
-    <strong>💾 LAYER 3 · Context &amp; Memory</strong> &nbsp;—&nbsp; RAG &nbsp;·&nbsp; Pinecone &nbsp;·&nbsp; Weaviate &nbsp;·&nbsp; pgvector &nbsp;·&nbsp; Session State
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#dbeafe;border:2px solid #3b82f6;border-radius:6px;padding:11px 18px;margin:3px 0;color:#1e40af;text-align:center">
-    <strong>🌐 LAYER 2 · Model Access API</strong> &nbsp;—&nbsp; AWS Bedrock &nbsp;·&nbsp; Azure OpenAI &nbsp;·&nbsp; Vertex AI &nbsp;·&nbsp; Direct APIs
-  </div>
-  <div style="text-align:center;color:#aaa;font-size:1.1rem;line-height:1.2">↑</div>
-  <div style="background:#fef3c7;border:2px solid #d97706;border-radius:6px;padding:11px 18px;margin:3px 0;color:#92400e;text-align:center">
-    <strong>⚡ LAYER 1 · Foundation Models</strong> &nbsp;—&nbsp; Claude &nbsp;·&nbsp; GPT-4o &nbsp;·&nbsp; Gemini &nbsp;·&nbsp; Llama &nbsp;·&nbsp; Mistral
-  </div>
-</div>
-
-Let's walk through each layer from the ground up.
+Think of any AI product you've used — a chatbot, a coding assistant, an AI analyst inside your SaaS tool. Behind that simple interface sits a surprisingly deep stack. Let's walk through each layer from the ground up.
 
 ---
 
