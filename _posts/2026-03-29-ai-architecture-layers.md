@@ -4,7 +4,6 @@ date: 2026-03-29 09:00:00 +0800
 categories: [AI, Architecture]
 tags: [ai, llm, agents, mcp, rag, fine-tuning, architecture, enterprise-ai, langchain, aws-bedrock]
 mermaid: true
-description: "The root cause is usually the same: no clear map of the stack. The modern AI application has 7 distinct layers — each with a different answer to build vs. buy. From foundation models to the UI your users see, here's the map."
 image:
   path: /assets/img/posts/ai-architecture-layers/cover.png
   alt: The Modern AI Application Stack — 7 Layers
