@@ -32,6 +32,18 @@ toc: true
 
 paginate: 10
 
+comments:
+  provider: giscus
+  giscus:
+    repo: mrsrinivas/mrsrinivas.github.io
+    repo_id: MDEwOlJlcG9zaXRvcnkzNzI0MzA4OA==
+    category: General
+    category_id: DIC_kwDOAjhI0M4C5iMa
+    mapping: url
+    strict: 1
+    reactions_enabled: 1
+    input_position: bottom
+
 markdown: kramdown
 highlighter: rouge
 kramdown:
@@ -57,7 +69,7 @@ defaults:
       type: posts
     values:
       layout: post
-      comments: false
+      comments: true
       toc: true
   - scope:
       path: ""
