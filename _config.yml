@@ -32,6 +32,13 @@ toc: true
 
 paginate: 10
 
+analytics:
+  goatcounter:
+    id: sreddya
+
+pageviews:
+  provider: goatcounter
+
 comments:
   provider: giscus
   giscus:
