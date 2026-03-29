@@ -25,7 +25,7 @@ Before routing decisions happen, a producer passes a message through a pipeline 
 
 ```mermaid
 flowchart TB
-    PR["ProducerRecord\n(topic, [partition], [key], value)"]
+    PR["ProducerRecord\nTopic | [Partition] | [Key] | Value"]
 
     subgraph internals["Producer Internals"]
         SER["Serializer"]
@@ -34,22 +34,21 @@ flowchart TB
         B1["Topic B / Partition 1\nBatch 0 | Batch 1 | Batch 2"]
         FAIL{"Fail?"}
         RETRY{"Retry?"}
+
         SER --> PART
         PART --> B0 & B1
+        FAIL -->|"Yes"| RETRY
+        RETRY -->|"Yes"| B0 & B1
     end
 
     BR[("Kafka Broker")]
-    META["Metadata"]
-    EXC(["Throw Exception"])
+    EXC["Throw Exception"]
 
-    PR --> SER
+    PR -->|"Send()"| SER
     B0 & B1 --> BR
-    BR -->|"success — return Metadata"| META
-    META --> PR
-    BR -->|"error"| FAIL
-    FAIL -->|"yes"| RETRY
-    RETRY --> B0 & B1
-    FAIL -->|"no"| EXC
+    BR -->|"When successful, return Metadata"| PR
+    BR --> FAIL
+    RETRY -->|"If can't retry, throw exception"| EXC
 ```
 
 A producer always targets a **topic**, never a partition directly. But every message lands in exactly one partition. The selection follows a strict priority chain:
