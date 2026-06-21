@@ -5,7 +5,7 @@ categories: [AI, Architecture]
 tags: [ai, agents, llm, agent-architecture, context-engineering, metadata, knowledge-graph, hitl, product-engineering, build-vs-buy]
 mermaid: true
 image:
-  path: /assets/img/posts/patterns-for-ai-agent-products/cover.svg
+  path: /assets/img/posts/patterns-for-ai-agent-products/cover.png
   alt: The data substrate — five layers underneath the rented model
 ---
 
