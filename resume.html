@@ -223,9 +223,14 @@
   <div class="resume-section">
     <h2><i class="fas fa-user"></i> Summary</h2>
     <ul>
-      <li><i class="fas fa-calendar-alt"></i> Accomplished Cloud Data/AI Solutions Lead with over a decade of experience in designing and
-        developing data/ml products and platforms for analytical consumers, adept in both cloud and on-premises
-        environments.
+      <li><i class="fas fa-calendar-alt"></i> Staff-level data and AI engineer with over a decade building production
+        data/ML platforms, working embedded with enterprise customers from requirements through to production ownership.
+      </li>
+      <li><i class="fas fa-robot"></i> Builds production GenAI systems hands-on: LLM agents with tool calling and MCP
+        integrations on Bedrock, retrieval grounded in governed metadata, and human-in-the-loop approval workflows.
+      </li>
+      <li><i class="fas fa-handshake"></i> Works as the senior technical voice with client executives and their
+        engineering teams, in regulated environments and under escalation.
       </li>
       <li><i class="fas fa-tools"></i> Highly skilled in leveraging and building frameworks with advanced technologies,
         including Apache Spark, Apache Kafka, Apache Flink, Apache Iceberg, AWS Cloud, Mlflow, LangChain, Presto, ScyllaDB, and Airflow.
@@ -234,8 +239,8 @@
         processing terabytes daily, meeting stringent SLAs, and developing petabyte-scale, multi-tenant cloud data
         platforms on AWS.
       </li>
-      <li><i class="fas fa-users"></i> Demonstrated leadership in team management, project oversight, and mentorship,
-        ensuring successful project delivery and fostering professional growth.
+      <li><i class="fas fa-users"></i> Turns vague problems into shipped systems, and grows engineers through design
+        review, mentorship, and hiring.
       </li>
       <li><i class="fas fa-flag-checkered"></i> Key Contributions:
         <ul>
@@ -263,22 +268,29 @@
         </div>
         <div class="role-duration"><i class="fas fa-calendar-alt"></i> Mar 2025 – Present</div>
       </div>
-      <div class="role-summary">Key member of the Data Platform team at Constantinople, leading client onboarding to the platform and delivering scalable data infrastructure and AI solutions for fintech operations.</div>
+      <div class="role-summary">Technical lead for the data platform behind a multi-tenant banking-as-a-service product, embedded with regulated banking clients from requirements through to production ownership, and driving the platform's GenAI work.</div>
 
       <h4><i class="fas fa-trophy"></i> Achievements</h4>
 
       <ul>
-        <li>Contributed to the revamp of tenant onboarding, streamlining integration for new clients on the data platform.</li>
-        <li>Initiated the design and implementation of an OpenMetadata system for enterprise-wide cataloging of 400+ data assets and automated lineage, enabling robust governance.</li>
-        <li>Migrated AWS EKS cluster to Bottlerocket OS, reducing vulnerabilities by 90%.</li>
+        <li>Built and shipped an internal AI agent platform on AWS Bedrock: a streaming chat app whose agent works across GitLab, Jira, Slack, ITSM, and data lineage, with every tool call scoped to the user's own OAuth permissions. (LangChain, FastAPI, SSE, OpenMetadata MCP, DynamoDB, EKS)</li>
+        <li>Automated data access provisioning on that platform, turning a plain-language request into a policy-checked merge request for human approval and cutting turnaround from days to minutes.</li>
+        <li>Rolled out a metadata platform cataloguing 400+ data assets with automated column-level lineage, replacing hours of asking the data team with seconds of self-service. (OpenMetadata, Snowflake, DBT, Spark)</li>
+        <li>Led data infrastructure for the first multi-tenant client go-live, cutting onboarding from 2 weeks to 2 days with reusable ingestion modules and canonical data models.</li>
+        <li>Built tenant isolation for fraud and financial crime data, closing a compliance gap without breaking cross-tenant access for fraud teams.</li>
+        <li>Cleared a three-week production blocker in cross-cloud data sharing by reproducing the failure and driving it through vendor engineering.</li>
+        <li>Introduced the team's design review and RFC practice, now used to onboard new engineers.</li>
       </ul>
 
       <h4><i class="fas fa-tasks"></i> Day-to-Day Responsibilities</h4>
       <ul>
-        <li>Work with AWS-based tech stack: EKS, Java, Scala, Python, Helm, RDS, OpenSearch, Terraform, Apache Spark, DBT, Snowflake, S3, Athena, Glue, EMR</li>
-        <li>Collaborate with cross-functional teams to gather requirements, design solutions, and support client integration onto the data platform.</li>
-        <li>Develop and maintain data cataloging, lineage, and governance systems using OpenMetadata and cloud-native tools.</li>
-        <li>Lead migration initiatives for large-scale data platforms, ensuring security, compliance, and business continuity.</li>
+        <li>Work with AWS-based tech stack: EKS, Java, Scala, Python, Helm, RDS, OpenSearch, Terraform, Apache Spark, DBT, Snowflake, Databricks, S3, Athena, Glue, EMR, Bedrock</li>
+        <li>Lead a distributed data platform team across three regions.</li>
+        <li>Onboard banking clients end to end, from requirements with their engineers to production handover.</li>
+        <li>Own client-facing incident response: root cause, stakeholder comms under escalation, and preventative controls.</li>
+        <li>Build and operate data cataloging, lineage, and governance systems.</li>
+        <li>Own daily regulatory reporting extracts into client cloud storage against contractual SLAs.</li>
+        <li>Mentor engineers and own the technical hiring bar for the data function.</li>
       </ul>
     </div>
     <div class="experience-item">
@@ -297,7 +309,6 @@
         <li>Developed a GenAI-powered analytics engine that generated actionable, user-friendly insights from billions of clickstream events, improving product team decision-making.</li>
         <li>Built a multi-tenant data platform that is used by 5 Grab subsidiaries by introducing a modular authorization framework that reduced access management overhead by 60%.</li>
         <li>Engineered a data quality validation system processing 5TB+ daily, increasing clickstream data accuracy by 30% and reducing incident rates.</li>
-        <li>Implemented a real-time feedback loop for AI pipelines, improving model reliability and reducing experiment cycle time by 25%.</li>
         <li>Directed the migration of a 1PB+ cloud data lake from AWS to Azure with zero downtime for analytics consumers.</li>
         <li>Reduced compute costs by 40% for experiment sample prediction by replacing full data scans with HyperLogLog and regression-based estimations.</li>
       </ul>
@@ -317,8 +328,6 @@
           <li>Enforced cell-level security for 2000+ datasets at DBS Bank's ADA platform, ensuring regulatory compliance via BlueTalon and Protegrity.</li>
           <li>Architected and optimized data pipelines handling 10TB+ daily, leveraging Airflow, Spark, and Kafka to improve processing efficiency by 35%.</li>
           <li>Integrated Kafka ecosystem with enterprise metadata and security, enabling secure, seamless streaming for 20+ teams.</li>
-          <li>Authored best practice guides and code samples, accelerating platform adoption and reducing onboarding time for new application teams by 50%.</li>
-          <li>Led the migration of a legacy data platform to Azure for Neilson, reducing infrastructure costs by 20% and modernizing batch processing workflows.</li>
         </ul>
       </div>
 
@@ -335,12 +344,8 @@
       <div class="experience-achievements">
         <h4><i class="fas fa-trophy"></i> Achievements:</h4>
         <ul>
-          <li>Developed custom Hive UDFs to extend Spark SQL capabilities, enabling advanced analytics for business users.</li>
-          <li>Set up and maintained Hadoop clusters for Dev/QA, improving environment stability and deployment speed.</li>
           <li>Rewrote Oracle SQL logic to ANSI SQL using ANTLR v4, streamlining migration and reducing technical debt.</li>
-          <li>Improved Spark job performance by 30% via YARN and Spark History Server tuning.</li>
           <li>Delivered Spark-based pricing applications on EMR-YARN, reducing processing time for government clients by 40%.</li>
-          <li>Automated S3 data transformation from CSV to Parquet, enhancing query performance and reducing storage costs.</li>
         </ul>
       </div>
 
@@ -359,11 +364,8 @@
         <h4><i class="fas fa-trophy"></i> Achievements:</h4>
         <ul>
           <li>Built MapReduce and Spark pipelines to analyze authentication and usage for 10M+ users, driving product improvements.</li>
-          <li>Boosted QR code authentication speed by 60% through binary optimization, enhancing user experience.</li>
-          <li>Launched an API monitoring portal with Splunk, providing real-time visibility into system health for engineering teams.</li>
-          <li>Automated complex job orchestration using Oozie, reducing manual interventions by 70%.</li>
           <li>Engineered a Spark-based engine for Telephone Denial of Service protection, reducing fraud incidents.</li>
-          <li>Streamlined data ingestion from multiple sources, optimizing HDFS maintenance and automating ETL with Sqoop and Flume.</li>
+          <li>Automated complex job orchestration using Oozie, reducing manual interventions by 70%.</li>
         </ul>
       </div>
     </div>
@@ -381,11 +383,7 @@
         <h4><i class="fas fa-trophy"></i> Achievements:</h4>
         <ul>
           <li>Designed and launched JobCoconut job portal, delivering robust database architecture and scalable features.</li>
-          <li>Integrated payment gateways for Maventus and Planlab, increasing transaction success rates.</li>
-          <li>Enabled multimedia content sharing via Facebook and Twitter APIs, expanding user engagement.</li>
-          <li>Implemented social authentication (Facebook, Google, Twitter, LinkedIn) for e-commerce and job platforms, improving sign-up conversion rates.</li>
-          <li>Drove full SDLC participation, ensuring on-time delivery from design to deployment.</li>
-          <li>Developed reusable Java and PHP modules, promoting code quality and maintainability.</li>
+          <li>Integrated payment gateways and social authentication (Facebook, Google, Twitter, LinkedIn) for e-commerce and job platforms.</li>
         </ul>
       </div>
     </div>
@@ -419,8 +417,16 @@
           <td>S3, Snowflake, ScyllaDB, Presto, StarRocks, DynamoDB, MySQL, PostgreSQL, Elasticsearch</td>
         </tr>
         <tr>
+          <td><i class="fas fa-robot"></i> GenAI & Agentic Systems</td>
+          <td>LangChain, Amazon Bedrock (Claude), MCP servers, tool/function-calling agents, structured LLM output (Pydantic), token streaming over SSE, FastAPI</td>
+        </tr>
+        <tr>
+          <td><i class="fas fa-sitemap"></i> Data Governance</td>
+          <td>OpenMetadata, column-level lineage, data contracts, data quality frameworks, RBAC-as-code</td>
+        </tr>
+        <tr>
           <td><i class="fas fa-chart-bar"></i> Data Science & Analytics</td>
-          <td>PyTorch, LangChain, MLflow, Superset, Ray</td>
+          <td>PyTorch, LangChain, MLflow, Superset, Ray, Tableau</td>
         </tr>
         <tr>
           <td><i class="fas fa-lock"></i> APIs & Integration</td>
